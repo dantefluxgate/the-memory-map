@@ -11,7 +11,7 @@ function App() {
   const [personalNote, setPersonalNote] = useState('')
 
   const addMemory = useCallback((memory) => {
-    setMemories((prev) => [...prev, { ...memory, id: Date.now().toString() }])
+    setMemories((prev) => [...prev, { ...memory, id: memory.id || Date.now().toString() }])
   }, [])
 
   const updateMemory = useCallback((id, data) => {

@@ -1,4 +1,5 @@
-import 'dotenv/config'
+import dotenv from 'dotenv'
+dotenv.config({ override: true })
 import express from 'express'
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -50,8 +51,8 @@ app.post('/api/process-memory', async (req, res) => {
     const parsed = JSON.parse(content)
     res.json(parsed)
   } catch (error) {
-    console.error('Memory processing error:', error)
-    res.status(500).json({ error: 'Failed to process memory' })
+    console.error('Memory processing error:', error?.message || error)
+    res.status(500).json({ error: 'Failed to process memory', detail: error?.message })
   }
 })
 
