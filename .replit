@@ -1,4 +1,4 @@
-run = "npm run start:replit"
+run = "npm install && npm run build && npm start"
 entrypoint = "server.js"
 
 [env]
@@ -9,7 +9,7 @@ PORT = "3000"
 channel = "stable-24_05"
 
 [deployment]
-run = ["sh", "-c", "npm run start"]
+run = ["sh", "-c", "npm start"]
 build = ["sh", "-c", "npm install && npm run build"]
 
 [[ports]]

@@ -7,7 +7,7 @@
     "dev": "vite",
     "server": "node server.js",
     "dev:all": "node server.js & vite",
-    "build": "vite build",
+    "build": "npx vite build",
     "start": "NODE_ENV=production node server.js",
     "start:replit": "npm run build && npm start",
     "lint": "eslint .",
