@@ -2,9 +2,19 @@ import dotenv from 'dotenv'
 dotenv.config({ override: true })
 import express from 'express'
 import Anthropic from '@anthropic-ai/sdk'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const app = express()
 app.use(express.json())
+
+// In production, serve the Vite build output
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(join(__dirname, 'dist')))
+}
 
 const anthropic = new Anthropic()
 
@@ -81,7 +91,14 @@ app.post('/api/relationship-summary', async (req, res) => {
   }
 })
 
+// In production, serve index.html for all non-API routes (SPA fallback)
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(join(__dirname, 'dist', 'index.html'))
+  })
+}
+
 const PORT = process.env.PORT || 3001
-app.listen(PORT, () => {
-  console.log(`API server running on port ${PORT}`)
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`)
 })

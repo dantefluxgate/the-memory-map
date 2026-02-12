@@ -8,6 +8,8 @@
     "server": "node server.js",
     "dev:all": "node server.js & vite",
     "build": "vite build",
+    "start": "NODE_ENV=production node server.js",
+    "start:replit": "npm run build && npm start",
     "lint": "eslint .",
     "preview": "vite preview"
   },
