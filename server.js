@@ -18,6 +18,11 @@ if (process.env.NODE_ENV === 'production') {
 
 const anthropic = new Anthropic()
 
+// Serve Mapbox token at runtime (avoids baking secrets into the build)
+app.get('/api/config', (req, res) => {
+  res.json({ mapboxToken: process.env.MAPBOX_TOKEN || '' })
+})
+
 const MEMORY_SYSTEM_PROMPT = `You are analyzing a personal memory shared about a relationship. Extract the following as JSON:
 
 {

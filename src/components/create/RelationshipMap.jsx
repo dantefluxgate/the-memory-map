@@ -16,7 +16,14 @@ export default function RelationshipMap({ memories }) {
       const mapboxgl = (await import('mapbox-gl')).default
       await import('mapbox-gl/dist/mapbox-gl.css')
 
-      mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''
+      // Fetch token at runtime to avoid baking secrets into the build
+      try {
+        const configRes = await fetch('/api/config')
+        const config = await configRes.json()
+        mapboxgl.accessToken = config.mapboxToken || ''
+      } catch {
+        mapboxgl.accessToken = ''
+      }
 
       if (!mapboxgl.accessToken) {
         console.warn('Mapbox token not set. Map will not render.')
