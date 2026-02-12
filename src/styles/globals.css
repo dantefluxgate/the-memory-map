@@ -3,6 +3,7 @@
 /* ============================================
    THE MEMORY MAP — Design System
    Aesthetic: "Warm Noir"
+   Competition-grade polish
    ============================================ */
 
 @theme {
@@ -47,6 +48,23 @@ body {
   color: var(--color-text-primary);
   line-height: 1.6;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Film grain / noise texture overlay — adds tactile depth */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
 ::selection {
@@ -77,7 +95,7 @@ body {
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -92,13 +110,13 @@ body {
 
 @keyframes node-pulse {
   0% { box-shadow: 0 0 0 0 rgba(212, 165, 116, 0.4); }
-  70% { box-shadow: 0 0 0 12px rgba(212, 165, 116, 0); }
+  70% { box-shadow: 0 0 0 14px rgba(212, 165, 116, 0); }
   100% { box-shadow: 0 0 0 0 rgba(212, 165, 116, 0); }
 }
 
 @keyframes breathe {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
 @keyframes slide-left {
@@ -150,8 +168,35 @@ body {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.3; }
+  0%, 100% { opacity: 0.12; transform: scale(1); }
+  50% { opacity: 0.25; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-4px) rotate(0.5deg); }
+  66% { transform: translateY(2px) rotate(-0.3deg); }
+}
+
+@keyframes warmth-wave {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes progress-fill {
+  from { width: 0%; }
 }
 
 /* ============================================
@@ -159,15 +204,15 @@ body {
    ============================================ */
 
 .animate-fade-up {
-  animation: fade-up 0.6s ease-out forwards;
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.6s ease-out forwards;
+  animation: fade-in 0.8s ease-out forwards;
 }
 
 .animate-node-pulse {
-  animation: node-pulse 1.5s ease-out;
+  animation: node-pulse 1.8s ease-out;
 }
 
 .animate-breathe {
@@ -175,11 +220,11 @@ body {
 }
 
 .animate-slide-left {
-  animation: slide-left 0.5s ease-out forwards;
+  animation: slide-left 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-slide-right {
-  animation: slide-right 0.5s ease-out forwards;
+  animation: slide-right 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-marker-drop {
@@ -187,18 +232,30 @@ body {
 }
 
 .animate-gentle-bounce {
-  animation: gentle-bounce 2s ease-in-out infinite;
+  animation: gentle-bounce 2.5s ease-in-out infinite;
 }
 
 .animate-shimmer {
   background: linear-gradient(
     90deg,
     var(--color-bg-elevated) 25%,
-    rgba(212, 165, 116, 0.08) 50%,
+    rgba(212, 165, 116, 0.06) 50%,
     var(--color-bg-elevated) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-card-enter {
+  animation: card-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
 }
 
 /* Stagger delays */
@@ -221,6 +278,51 @@ body {
 .reveal-hidden.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ============================================
+   Glassmorphism Utilities
+   ============================================ */
+
+.glass {
+  background: rgba(17, 17, 17, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 165, 116, 0.08);
+}
+
+.glass-card {
+  background: rgba(17, 17, 17, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 165, 116, 0.06);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.glass-card:hover {
+  background: rgba(26, 26, 26, 0.6);
+  border-color: rgba(212, 165, 116, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(212, 165, 116, 0.05);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   Memory Progress Indicator
+   ============================================ */
+
+.memory-progress {
+  width: 100%;
+  height: 2px;
+  background: rgba(212, 165, 116, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.memory-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border-radius: 1px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ============================================
@@ -252,20 +354,20 @@ body {
    ============================================ */
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-primary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-text-tertiary);
-  border-radius: 3px;
+  background: rgba(212, 165, 116, 0.2);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-secondary);
+  background: rgba(212, 165, 116, 0.4);
 }
 
 /* ============================================
@@ -275,5 +377,15 @@ body {
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-logo,
 .mapboxgl-ctrl-group {
+  display: none !important;
+}
+
+.mapboxgl-popup-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.mapboxgl-popup-tip {
   display: none !important;
 }

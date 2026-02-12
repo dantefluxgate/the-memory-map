@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -39,7 +40,7 @@ app.post('/api/process-memory', async (req, res) => {
     if (!text) return res.status(400).json({ error: 'Text is required' })
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
       system: MEMORY_SYSTEM_PROMPT,
       messages: [{ role: 'user', content: text }],
@@ -64,7 +65,7 @@ app.post('/api/relationship-summary', async (req, res) => {
       .join('\n\n')
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5-20250929',
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 512,
       system: SUMMARY_SYSTEM_PROMPT,
       messages: [{ role: 'user', content: memoriesText }],
