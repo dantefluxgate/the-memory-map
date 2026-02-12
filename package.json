@@ -4,14 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "server": "node server.js",
-    "dev:all": "node server.js & vite",
-    "build": "echo 'dist already built'",
-    "build:local": "npx vite build",
     "start": "NODE_ENV=production node server.js",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "server": "node server.js",
+    "build:local": "npx vite build --config vite.config.local.js",
+    "dev": "vite",
+    "dev:all": "node server.js & vite"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
