@@ -54,11 +54,20 @@ export default function SharedView() {
 
         <div className="text-center max-w-[500px] relative z-10">
           <p
-            className={`font-accent text-[clamp(26px,5vw,36px)] font-light text-text-primary leading-[1.3] transition-all duration-1000 ease-out ${
+            className={`font-accent text-[clamp(26px,5vw,32px)] font-light text-text-primary leading-[1.3] transition-all duration-[1500ms] ease-out ${
               phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
             Someone made this for you.
+          </p>
+
+          <p
+            className={`font-accent text-base text-text-tertiary/60 mt-4 transition-all duration-1000 ease-out ${
+              phase >= 1 ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ transitionDelay: '0.8s' }}
+          >
+            These are their memories of the two of you, in their own words.
           </p>
 
           {personalNote && (

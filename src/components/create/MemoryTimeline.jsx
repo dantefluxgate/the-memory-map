@@ -13,13 +13,13 @@ export default function MemoryTimeline({ memories, onDelete }) {
   }
 
   return (
-    <div className="relative py-8">
+    <div className="relative py-8" role="region" aria-label="Memory timeline">
       {/* Timeline spine */}
       <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-timeline-line -translate-x-1/2" />
 
-      <div className="space-y-8 md:space-y-12">
+      <ol className="space-y-8 md:space-y-12 list-none p-0 m-0">
         {memories.map((memory, index) => (
-          <div key={memory.id} className="relative">
+          <li key={memory.id} className="relative">
             {/* Timeline node */}
             <div className="hidden md:flex absolute left-1/2 top-6 -translate-x-1/2 z-10 w-2 h-2 rounded-full bg-accent-primary animate-node-pulse" />
 
@@ -28,9 +28,9 @@ export default function MemoryTimeline({ memories, onDelete }) {
               index={index}
               onDelete={onDelete}
             />
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   )
 }

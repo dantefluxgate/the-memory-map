@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import MemoryInput from './MemoryInput.jsx'
 import MemoryTimeline from './MemoryTimeline.jsx'
 import RelationshipMap from './RelationshipMap.jsx'
@@ -14,6 +14,7 @@ export default function CreateView({
   setRelationshipSummary,
 }) {
   const [isProcessing, setIsProcessing] = useState(false)
+  const inputRef = useRef(null)
   const { submitMemory } = useMemoryProcessor({
     addMemory,
     updateMemory,
@@ -26,6 +27,14 @@ export default function CreateView({
     await submitMemory(text)
     setIsProcessing(false)
   }
+
+  const scrollToInput = useCallback(() => {
+    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Focus the textarea after scrolling
+    setTimeout(() => {
+      inputRef.current?.querySelector('textarea')?.focus()
+    }, 400)
+  }, [])
 
   const progress = Math.min(memories.length / 5, 1) * 100
 
@@ -75,11 +84,11 @@ export default function CreateView({
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.65fr] gap-10">
           {/* Left column: input + timeline */}
           <div>
-            <div className="sticky top-6 z-20 bg-bg-primary/80 backdrop-blur-md pb-6">
+            <div ref={inputRef} className="sticky top-6 z-20 bg-bg-primary/80 backdrop-blur-md pb-6">
               <MemoryInput onSubmit={handleSubmit} isProcessing={isProcessing} />
             </div>
             <MemoryTimeline memories={memories} onDelete={deleteMemory} />
-            <ActionBar memoryCount={memories.length} />
+            <ActionBar memoryCount={memories.length} onScrollToInput={scrollToInput} />
           </div>
 
           {/* Right column: map */}

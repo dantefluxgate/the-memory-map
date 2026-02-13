@@ -101,6 +101,23 @@ export default function SharedMemoryMoment({ memory, index, total }) {
               {memory.location.place_name}
             </p>
           )}
+
+          {/* Emotion + theme tags */}
+          <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
+            {memory.emotion && (
+              <span className="font-body text-[9px] uppercase tracking-[0.1em] text-accent-primary/50 border border-accent-primary/15 rounded-full px-3 py-0.5">
+                {memory.emotion}
+              </span>
+            )}
+            {memory.theme_tags?.map((tag) => (
+              <span
+                key={tag}
+                className="font-body text-[9px] text-text-tertiary/30 bg-bg-elevated/30 rounded-full px-2.5 py-0.5"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 

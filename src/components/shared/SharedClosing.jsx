@@ -31,6 +31,25 @@ export default function SharedClosing({ summary }) {
           </p>
         )}
 
+        {/* Theme tags */}
+        {summary?.dominant_themes && (
+          <div
+            className={`flex items-center justify-center gap-3 mt-8 flex-wrap transition-all duration-700 ${
+              isVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ transitionDelay: '0.4s' }}
+          >
+            {summary.dominant_themes.map((theme) => (
+              <span
+                key={theme}
+                className="font-body text-[10px] uppercase tracking-[0.08em] text-accent-primary/50 border border-accent-primary/15 rounded-full px-4 py-1"
+              >
+                {theme}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Decorative line */}
         <div
           className={`w-12 h-px bg-accent-primary/20 mx-auto my-10 transition-all duration-800 ${

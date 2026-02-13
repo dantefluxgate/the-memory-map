@@ -46,7 +46,7 @@ export default function HeroSection() {
         </h1>
 
         <p
-          className="font-accent text-[clamp(18px,2.5vw,22px)] text-text-secondary mt-6 max-w-[480px] mx-auto leading-relaxed opacity-0 animate-fade-up"
+          className="font-body font-normal text-[clamp(16px,2.5vw,20px)] text-text-secondary mt-6 max-w-[480px] mx-auto leading-relaxed opacity-0 animate-fade-up"
           style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
         >
           Talk about the person you love. We'll turn it into a visual story you can share.
