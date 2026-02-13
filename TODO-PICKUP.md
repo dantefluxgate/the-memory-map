@@ -1,24 +1,25 @@
 # The Memory Map — Pickup Notes
-## Last updated: Session ending Feb 13, 2026
+## Last updated: Session 3 — Feb 13, 2026 (3:45 AM)
 
 ---
 
-## CURRENT STATUS: ~85% Complete
+## CURRENT STATUS: ~90% Complete
 
-The app is fully functional end-to-end. A user can enter memories, Claude processes them, they appear on a timeline + map, and can be shared via URL. The Three.js heart constellation is working locally. The main gaps are polish, a few missing spec details, and getting the deployment reliably working.
+The app is fully functional end-to-end. Three.js particle constellation now renders across ALL views with a reusable `ParticleField` component. The critical Replit deployment bug (dynamic import code-splitting failure) has been fixed by switching to direct imports.
 
 ---
 
 ## CRITICAL: REPLIT DEPLOYMENT
 
-The published app was NOT showing the Three.js visual because the `[deployment] run` command was missing the build step. This was **fixed** in the last commit (`8f7bcf4`).
+Two issues were preventing particles from showing:
+1. **Build step missing** — Fixed in `8f7bcf4` (`.replit` deployment command)
+2. **Dynamic import code-splitting** — Fixed in `100d692`. The old `ParticleConstellation.jsx` used `import()` which created a separate chunk that Replit couldn't resolve at runtime. New `ParticleField.jsx` uses direct `import` so Three.js is bundled into the main JS chunk.
 
 **To verify it works:**
 1. In the Replit shell, run: `git pull origin master`
-2. Republish the app
-3. The deployment command now runs `npm install && npm run build` before starting the server
-
-If Replit's AI agent has been modifying files (it changed the headline text to something different), you may need to do a hard reset: `git fetch origin && git reset --hard origin/master` in the Replit shell to get back to our codebase.
+2. If Replit's AI agent modified files, do: `git fetch origin && git reset --hard origin/master`
+3. Republish the app
+4. Particles should now appear on every page
 
 ---
 
@@ -27,6 +28,13 @@ If Replit's AI agent has been modifying files (it changed the headline text to s
 ### Core Flow ✅
 - [x] Landing page with hero, CTA, how-it-works
 - [x] Three.js particle constellation with **heart formation cycle** (drift → gather → hold → scatter)
+- [x] **Reusable `ParticleField` component** across all views:
+  - HeroSection: heart mode, intensity 0.7
+  - CreateView: drift mode, intensity 0.3 (subtle ambient)
+  - RelationshipIntro: ambient mode, intensity 0.4
+  - PreviewView: heart mode, intensity 0.5
+  - SharedView: heart mode, intensity 0.8 (most intense for gift)
+- [x] Direct import (no code-splitting) fixes Replit deployment
 - [x] Relationship intro step (name + relationship type)
 - [x] Memory input (text, auto-grow, focus glow, submit)
 - [x] Claude AI memory processing (title, emotion, location, excerpt, tags)
@@ -117,6 +125,7 @@ If Replit's AI agent has been modifying files (it changed the headline text to s
 | `server.js` | Express + Claude API endpoints |
 | `src/App.jsx` | Router, state management, localStorage |
 | `src/lib/constellationScene.js` | Three.js heart constellation |
+| `src/components/common/ParticleField.jsx` | Reusable Three.js particle component |
 | `src/components/landing/HeroSection.jsx` | Landing hero + particle canvas |
 | `src/components/create/RelationshipIntro.jsx` | "Who is this for?" step |
 | `src/components/create/CreateView.jsx` | Main create view (input + timeline + map) |
@@ -133,4 +142,4 @@ If Replit's AI agent has been modifying files (it changed the headline text to s
 ## GIT INFO
 - **Repo:** https://github.com/dantefluxgate/the-memory-map.git
 - **Branch:** master
-- **Latest commit:** `8f7bcf4` — Fix deployment: add build step to Replit deployment command
+- **Latest commit:** `100d692` — Add reusable ParticleField component across all views, fix Replit deployment
