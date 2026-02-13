@@ -1,21 +1,26 @@
 import { useRef, useEffect, useState } from 'react'
 
+// Check WebGL support without tainting a canvas
+function detectWebGL() {
+  try {
+    const testCanvas = document.createElement('canvas')
+    const gl =
+      testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl')
+    return !!gl
+  } catch {
+    return false
+  }
+}
+
 export default function ParticleConstellation() {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
-  const [supported, setSupported] = useState(true)
+  const [supported, setSupported] = useState(() => detectWebGL())
 
   useEffect(() => {
+    if (!supported) return
     const canvas = canvasRef.current
     if (!canvas) return
-
-    // WebGL detection
-    const gl =
-      canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
-    if (!gl) {
-      setSupported(false)
-      return
-    }
 
     // StrictMode-safe destroyed flag
     let destroyed = false
@@ -31,7 +36,9 @@ export default function ParticleConstellation() {
           connectionDistance: isMobile ? 90 : 120,
         })
       }
-    )
+    ).catch((err) => {
+      console.warn('Constellation scene failed to load:', err)
+    })
 
     // ── Resize (debounced) ─────────────────────────────────
     let resizeTimer = null

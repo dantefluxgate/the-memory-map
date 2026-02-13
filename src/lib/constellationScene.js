@@ -101,7 +101,7 @@ export function createConstellationScene(canvas, options = {}) {
   const MOUSE_RADIUS = 130
   const MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS
   const MAX_CONNECTIONS = 250
-  const CONNECTION_ALPHA_CAP = 0.12
+  const CONNECTION_ALPHA_CAP = 0.20
 
   const mouse = { x: 0, y: 0, active: false }
 
@@ -138,8 +138,8 @@ export function createConstellationScene(canvas, options = {}) {
       y: (Math.random() - 0.5) * height,
       vx: (Math.random() - 0.5) * 0.3,
       vy: (Math.random() - 0.5) * 0.3,
-      baseAlpha: 0.15 + Math.random() * 0.35,
-      size: (1.5 + Math.random() * 2.0) * Math.min(window.devicePixelRatio, 2),
+      baseAlpha: 0.25 + Math.random() * 0.45,
+      size: (2.0 + Math.random() * 2.5) * Math.min(window.devicePixelRatio, 2),
       phase: Math.random() * Math.PI * 2,
     })
   }
@@ -228,7 +228,7 @@ export function createConstellationScene(canvas, options = {}) {
       }
 
       // Breathing alpha oscillation
-      const breathe = Math.sin(elapsed * 0.5 + p.phase) * 0.08
+      const breathe = Math.sin(elapsed * 0.5 + p.phase) * 0.12
 
       // Write buffers
       positions[i * 3] = p.x
