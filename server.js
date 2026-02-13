@@ -23,7 +23,13 @@ app.get('/api/config', (req, res) => {
   res.json({ mapboxToken: process.env.MAPBOX_TOKEN || '' })
 })
 
-const MEMORY_SYSTEM_PROMPT = `You are analyzing a personal memory shared about a relationship. Extract the following as JSON:
+function buildMemoryPrompt(context) {
+  const contextLine = context
+    ? `\nContext: This memory is about someone named "${context.name}" who is the creator's ${context.typeLabel || 'loved one'}.\n`
+    : ''
+
+  return `You are analyzing a personal memory shared about a relationship.${contextLine}
+Extract the following as JSON:
 
 {
   "title": "A short, evocative title for this memory (max 6 words)",
@@ -38,27 +44,34 @@ const MEMORY_SYSTEM_PROMPT = `You are analyzing a personal memory shared about a
 }
 
 Keep the person's voice. Don't rewrite their words. Just extract and organize. Return ONLY valid JSON, no markdown fences.`
+}
 
-const SUMMARY_SYSTEM_PROMPT = `Based on these memories about a relationship, generate:
+function buildSummaryPrompt(context) {
+  const contextLine = context
+    ? `\nContext: These memories are about someone named "${context.name}" who is the creator's ${context.typeLabel || 'loved one'}.\n`
+    : ''
+
+  return `Based on these memories about a relationship, generate:${contextLine}
 
 {
-  "relationship_essence": "One sentence capturing what makes this relationship special",
+  "relationship_essence": "One sentence capturing what makes this relationship with ${context?.name || 'this person'} special",
   "dominant_themes": ["top 3 themes across all memories"],
   "timeline_title": "A poetic but not cheesy title for this collection (max 8 words)",
   "color_mood": "warm_amber | deep_rose | golden_hour | midnight_blue"
 }
 
 Be specific to THESE memories. No generic love quotes. Return ONLY valid JSON, no markdown fences.`
+}
 
 app.post('/api/process-memory', async (req, res) => {
   try {
-    const { text } = req.body
+    const { text, context } = req.body
     if (!text) return res.status(400).json({ error: 'Text is required' })
 
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
-      system: MEMORY_SYSTEM_PROMPT,
+      system: buildMemoryPrompt(context),
       messages: [{ role: 'user', content: text }],
     })
 
@@ -73,7 +86,7 @@ app.post('/api/process-memory', async (req, res) => {
 
 app.post('/api/relationship-summary', async (req, res) => {
   try {
-    const { memories } = req.body
+    const { memories, context } = req.body
     if (!memories?.length) return res.status(400).json({ error: 'Memories are required' })
 
     const memoriesText = memories
@@ -83,7 +96,7 @@ app.post('/api/relationship-summary', async (req, res) => {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 512,
-      system: SUMMARY_SYSTEM_PROMPT,
+      system: buildSummaryPrompt(context),
       messages: [{ role: 'user', content: memoriesText }],
     })
 

@@ -1,10 +1,10 @@
 const API_BASE = '/api'
 
-export async function processMemory(text) {
+export async function processMemory(text, relationshipContext) {
   const response = await fetch(`${API_BASE}/process-memory`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, context: relationshipContext || null }),
   })
 
   if (!response.ok) {
@@ -14,11 +14,11 @@ export async function processMemory(text) {
   return response.json()
 }
 
-export async function generateRelationshipSummary(memories) {
+export async function generateRelationshipSummary(memories, relationshipContext) {
   const response = await fetch(`${API_BASE}/relationship-summary`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ memories }),
+    body: JSON.stringify({ memories, context: relationshipContext || null }),
   })
 
   if (!response.ok) {

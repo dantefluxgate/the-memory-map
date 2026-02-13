@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { processMemory, generateRelationshipSummary } from '../utils/api.js'
 
-export default function useMemoryProcessor({ addMemory, updateMemory, memories, setRelationshipSummary }) {
+export default function useMemoryProcessor({ addMemory, updateMemory, memories, setRelationshipSummary, relationshipContext }) {
   const submitMemory = useCallback(async (text) => {
     const tempId = Date.now().toString()
     const placeholderMemory = {
@@ -19,7 +19,7 @@ export default function useMemoryProcessor({ addMemory, updateMemory, memories, 
     addMemory(placeholderMemory)
 
     try {
-      const processed = await processMemory(text)
+      const processed = await processMemory(text, relationshipContext)
       updateMemory(tempId, {
         ...processed,
         loading: false,
@@ -30,7 +30,7 @@ export default function useMemoryProcessor({ addMemory, updateMemory, memories, 
       if (updatedCount >= 3) {
         const allMemories = [...memories.map(m => m.rawText || m.excerpt), text]
         try {
-          const summary = await generateRelationshipSummary(allMemories)
+          const summary = await generateRelationshipSummary(allMemories, relationshipContext)
           setRelationshipSummary(summary)
         } catch (e) {
           console.error('Summary generation failed:', e)
@@ -46,7 +46,7 @@ export default function useMemoryProcessor({ addMemory, updateMemory, memories, 
         theme_tags: ['personal'],
       })
     }
-  }, [addMemory, updateMemory, memories, setRelationshipSummary])
+  }, [addMemory, updateMemory, memories, setRelationshipSummary, relationshipContext])
 
   return { submitMemory }
 }

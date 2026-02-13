@@ -31,7 +31,8 @@ export default function SharedView() {
     )
   }
 
-  const { memories, summary, personalNote } = shareData
+  const { memories, summary, personalNote, relationshipContext } = shareData
+  const recipientName = relationshipContext?.name
 
   return (
     <main className="min-h-screen bg-bg-primary">
@@ -58,7 +59,10 @@ export default function SharedView() {
               phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
-            Someone made this for you.
+            {recipientName
+              ? <>Someone made this for you, <span className="text-accent-primary">{recipientName}</span>.</>
+              : 'Someone made this for you.'
+            }
           </p>
 
           <p

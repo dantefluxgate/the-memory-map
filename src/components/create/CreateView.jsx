@@ -3,6 +3,7 @@ import MemoryInput from './MemoryInput.jsx'
 import MemoryTimeline from './MemoryTimeline.jsx'
 import RelationshipMap from './RelationshipMap.jsx'
 import ActionBar from './ActionBar.jsx'
+import RelationshipIntro from './RelationshipIntro.jsx'
 import useMemoryProcessor from '../../hooks/useMemoryProcessor.js'
 
 export default function CreateView({
@@ -10,6 +11,8 @@ export default function CreateView({
   addMemory,
   updateMemory,
   deleteMemory,
+  relationshipContext,
+  setRelationshipContext,
   relationshipSummary,
   setRelationshipSummary,
 }) {
@@ -20,6 +23,7 @@ export default function CreateView({
     updateMemory,
     memories,
     setRelationshipSummary,
+    relationshipContext,
   })
 
   const handleSubmit = async (text) => {
@@ -30,11 +34,19 @@ export default function CreateView({
 
   const scrollToInput = useCallback(() => {
     inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    // Focus the textarea after scrolling
     setTimeout(() => {
       inputRef.current?.querySelector('textarea')?.focus()
     }, 400)
   }, [])
+
+  // Show intro step if no relationship context set yet
+  if (!relationshipContext) {
+    return (
+      <main className="min-h-screen bg-bg-primary">
+        <RelationshipIntro onComplete={setRelationshipContext} />
+      </main>
+    )
+  }
 
   const progress = Math.min(memories.length / 5, 1) * 100
 
@@ -52,11 +64,15 @@ export default function CreateView({
         {/* Header */}
         <div className="mb-2">
           <h1 className="font-display text-3xl font-medium text-text-primary">
-            Your Memory Map
+            Memories of {relationshipContext.name}
           </h1>
-          {relationshipSummary?.timeline_title && (
+          {relationshipSummary?.timeline_title ? (
             <p className="font-accent italic text-lg text-text-secondary mt-1">
               {relationshipSummary.timeline_title}
+            </p>
+          ) : (
+            <p className="font-body text-sm text-text-tertiary/50 mt-1">
+              {relationshipContext.typeLabel}
             </p>
           )}
         </div>
@@ -85,7 +101,11 @@ export default function CreateView({
           {/* Left column: input + timeline */}
           <div>
             <div ref={inputRef} className="sticky top-6 z-20 bg-bg-primary/80 backdrop-blur-md pb-6">
-              <MemoryInput onSubmit={handleSubmit} isProcessing={isProcessing} />
+              <MemoryInput
+                onSubmit={handleSubmit}
+                isProcessing={isProcessing}
+                recipientName={relationshipContext.name}
+              />
             </div>
             <MemoryTimeline memories={memories} onDelete={deleteMemory} />
             <ActionBar memoryCount={memories.length} onScrollToInput={scrollToInput} />

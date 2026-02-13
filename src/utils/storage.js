@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'memory-map-data'
+const CONTEXT_KEY = 'memory-map-context'
 
 export function saveMemories(memories) {
   try {
@@ -20,4 +21,22 @@ export function loadMemories() {
 
 export function clearMemories() {
   localStorage.removeItem(STORAGE_KEY)
+}
+
+export function saveRelationshipContext(context) {
+  try {
+    localStorage.setItem(CONTEXT_KEY, JSON.stringify(context))
+  } catch (e) {
+    console.error('Failed to save context:', e)
+  }
+}
+
+export function loadRelationshipContext() {
+  try {
+    const data = localStorage.getItem(CONTEXT_KEY)
+    return data ? JSON.parse(data) : null
+  } catch (e) {
+    console.error('Failed to load context:', e)
+    return null
+  }
 }

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Button from '../common/Button.jsx'
 import { generateShareUrl } from '../../utils/shareLink.js'
 
-export default function ShareControls({ memories, summary, personalNote }) {
+export default function ShareControls({ memories, summary, personalNote, relationshipContext }) {
   const [shareUrl, setShareUrl] = useState('')
   const [copied, setCopied] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -10,7 +10,7 @@ export default function ShareControls({ memories, summary, personalNote }) {
   const handleGenerate = () => {
     setGenerating(true)
     setTimeout(() => {
-      const url = generateShareUrl(memories, summary, personalNote)
+      const url = generateShareUrl(memories, summary, personalNote, relationshipContext)
       setShareUrl(url)
       setGenerating(false)
     }, 600)

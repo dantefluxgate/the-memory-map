@@ -5,7 +5,7 @@ import ShareControls from './ShareControls.jsx'
 import ScrollReveal from '../common/ScrollReveal.jsx'
 import Button from '../common/Button.jsx'
 
-export default function PreviewView({ memories, relationshipSummary, personalNote, setPersonalNote }) {
+export default function PreviewView({ memories, relationshipContext, relationshipSummary, personalNote, setPersonalNote }) {
   const navigate = useNavigate()
 
   if (memories.length === 0) {
@@ -118,6 +118,7 @@ export default function PreviewView({ memories, relationshipSummary, personalNot
           memories={memories}
           summary={relationshipSummary}
           personalNote={personalNote}
+          relationshipContext={relationshipContext}
         />
       </div>
     </main>

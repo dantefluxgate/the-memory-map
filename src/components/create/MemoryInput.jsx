@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-export default function MemoryInput({ onSubmit, isProcessing }) {
+export default function MemoryInput({ onSubmit, isProcessing, recipientName }) {
   const [text, setText] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef(null)
@@ -39,7 +39,7 @@ export default function MemoryInput({ onSubmit, isProcessing }) {
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder="Tell me about a moment you shared..."
+          placeholder={recipientName ? `Tell me about a moment with ${recipientName}...` : 'Tell me about a moment you shared...'}
           rows={3}
           className="relative w-full min-h-[130px] max-h-[240px] resize-none bg-bg-secondary/90 backdrop-blur-sm border border-border-subtle rounded-xl p-6 pr-14 font-body text-base text-text-primary placeholder:font-accent placeholder:italic placeholder:text-lg placeholder:text-text-tertiary/60 focus:outline-none focus:border-accent-primary/30 transition-all duration-300"
         />

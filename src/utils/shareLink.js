@@ -1,4 +1,4 @@
-export function encodeShareData(memories, summary, personalNote) {
+export function encodeShareData(memories, summary, personalNote, relationshipContext) {
   const payload = {
     m: memories.map((mem) => ({
       t: mem.title,
@@ -17,6 +17,9 @@ export function encodeShareData(memories, summary, personalNote) {
         }
       : null,
     n: personalNote || null,
+    r: relationshipContext
+      ? { name: relationshipContext.name, type: relationshipContext.type }
+      : null,
   }
 
   const json = JSON.stringify(payload)
@@ -48,14 +51,16 @@ export function decodeShareData(encoded) {
         }
       : null
 
-    return { memories, summary, personalNote: payload.n }
+    const relationshipContext = payload.r || null
+
+    return { memories, summary, personalNote: payload.n, relationshipContext }
   } catch (e) {
     console.error('Failed to decode share data:', e)
     return null
   }
 }
 
-export function generateShareUrl(memories, summary, personalNote) {
-  const encoded = encodeShareData(memories, summary, personalNote)
+export function generateShareUrl(memories, summary, personalNote, relationshipContext) {
+  const encoded = encodeShareData(memories, summary, personalNote, relationshipContext)
   return `${window.location.origin}/shared/${encoded}`
 }
