@@ -6,7 +6,6 @@ const POINT_VERTEX = `
   attribute float alpha;
   attribute float aSize;
   varying float vAlpha;
-
   void main() {
     vAlpha = alpha;
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
@@ -18,7 +17,6 @@ const POINT_VERTEX = `
 const POINT_FRAGMENT = `
   varying float vAlpha;
   uniform vec3 uColor;
-
   void main() {
     float dist = length(gl_PointCoord - vec2(0.5));
     if (dist > 0.5) discard;
@@ -30,7 +28,6 @@ const POINT_FRAGMENT = `
 const LINE_VERTEX = `
   attribute float alpha;
   varying float vAlpha;
-
   void main() {
     vAlpha = alpha;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
@@ -40,7 +37,6 @@ const LINE_VERTEX = `
 const LINE_FRAGMENT = `
   varying float vAlpha;
   uniform vec3 uColor;
-
   void main() {
     gl_FragColor = vec4(uColor, vAlpha);
   }
@@ -49,13 +45,8 @@ const LINE_FRAGMENT = `
 // ─── Heart Curve ─────────────────────────────────────────────
 
 function heartPoint(t, scale) {
-  // Parametric heart curve (t from 0 to 2π)
   const x = 16 * Math.pow(Math.sin(t), 3)
-  const y =
-    13 * Math.cos(t) -
-    5 * Math.cos(2 * t) -
-    2 * Math.cos(3 * t) -
-    Math.cos(4 * t)
+  const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)
   return { x: x * scale, y: y * scale }
 }
 
@@ -63,53 +54,39 @@ function generateHeartTargets(count, scale) {
   const targets = []
   for (let i = 0; i < count; i++) {
     const t = (i / count) * Math.PI * 2
-    // Add slight jitter so it doesn't look perfectly mechanical
-    const jitter = (Math.random() - 0.5) * scale * 0.6
-    const jitterY = (Math.random() - 0.5) * scale * 0.6
+    const jx = (Math.random() - 0.5) * scale * 0.6
+    const jy = (Math.random() - 0.5) * scale * 0.6
     const pt = heartPoint(t, scale)
-    targets.push({ x: pt.x + jitter, y: pt.y + jitterY })
+    targets.push({ x: pt.x + jx, y: pt.y + jy })
   }
   return targets
 }
 
-// ─── Smooth easing ───────────────────────────────────────────
-
 function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2
 }
 
 // ─── Spatial Grid ────────────────────────────────────────────
 
-function buildGrid(particles, cellSize, width, height) {
-  const halfW = width / 2
+function buildGrid(particles, cellSize, halfW) {
   const cells = new Map()
-
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i]
-    const col = Math.floor((p.x + halfW) / cellSize)
-    const row = Math.floor((p.y + halfW) / cellSize)
-    const key = col * 10000 + row
+    const key = Math.floor((p.x + halfW) / cellSize) * 10000 + Math.floor((p.y + halfW) / cellSize)
     if (!cells.has(key)) cells.set(key, [])
     cells.get(key).push(i)
   }
-
-  return { cells }
+  return cells
 }
 
-function getNeighborIndices(grid, col, row) {
-  const indices = []
-  for (let dc = -1; dc <= 1; dc++) {
+function getNeighbors(cells, col, row) {
+  const out = []
+  for (let dc = -1; dc <= 1; dc++)
     for (let dr = -1; dr <= 1; dr++) {
-      const key = (col + dc) * 10000 + (row + dr)
-      const cell = grid.cells.get(key)
-      if (cell) {
-        for (let i = 0; i < cell.length; i++) {
-          indices.push(cell[i])
-        }
-      }
+      const c = cells.get((col+dc)*10000 + (row+dr))
+      if (c) for (let i = 0; i < c.length; i++) out.push(c[i])
     }
-  }
-  return indices
+  return out
 }
 
 // ─── Scene Factory ───────────────────────────────────────────
@@ -119,6 +96,9 @@ export function createConstellationScene(canvas, options = {}) {
     particleCount = 90,
     connectionDistance = 120,
     color = 0xd4a574,
+    heartMode = 'heart',
+    alphaMultiplier = 1.0,
+    connectionAlphaMultiplier = 1.0,
   } = options
 
   let width = window.innerWidth
@@ -127,350 +107,166 @@ export function createConstellationScene(canvas, options = {}) {
   let halfH = height / 2
   let rafId = null
 
-  const MOUSE_RADIUS = 130
-  const MOUSE_RADIUS_SQ = MOUSE_RADIUS * MOUSE_RADIUS
-  const MAX_CONNECTIONS = 250
-  const CONNECTION_ALPHA_CAP = 0.20
+  const MR = 130, MR_SQ = MR * MR
+  const MAX_CONN = 250
+  const BASE_CONN_ALPHA = 0.20
 
-  // ── Heart formation cycle timing (seconds) ─────────────────
-  // drift → gather → hold → scatter → drift ...
-  const DRIFT_DURATION = 10     // seconds drifting freely
-  const GATHER_DURATION = 3     // seconds to form heart
-  const HOLD_DURATION = 4       // seconds holding heart shape
-  const SCATTER_DURATION = 2.5  // seconds dissolving back
-  const CYCLE_TOTAL = DRIFT_DURATION + GATHER_DURATION + HOLD_DURATION + SCATTER_DURATION
+  const D_DUR = 10, G_DUR = 3, H_DUR = 4, S_DUR = 2.5
+  const CYCLE = D_DUR + G_DUR + H_DUR + S_DUR
 
+  const doHeart = heartMode === 'heart'
   const mouse = { x: 0, y: 0, active: false }
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // ── Reduced motion check ───────────────────────────────────
-  const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches
-
-  // ── Renderer ───────────────────────────────────────────────
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    alpha: true,
-    antialias: false,
-    powerPreference: 'low-power',
-  })
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setSize(width, height)
 
-  // ── Camera (orthographic — flat ambient field) ─────────────
-  const camera = new THREE.OrthographicCamera(
-    -halfW, halfW, halfH, -halfH, 0.1, 100
-  )
+  const camera = new THREE.OrthographicCamera(-halfW, halfW, halfH, -halfH, 0.1, 100)
   camera.position.z = 10
-
   const scene = new THREE.Scene()
+  const col3 = new THREE.Color(color)
 
-  // ── Particles ──────────────────────────────────────────────
-  const threeColor = new THREE.Color(color)
-
-  // Heart scale relative to viewport (smaller dimension)
-  // The parametric heart spans roughly -16..+16 in x and -17..+13 in y
-  // So scale * 16 ≈ half-width of heart. We want heart ~40% of viewport width.
-  const heartScale = Math.min(width, height) * 0.028
-
-  // Generate heart target positions for each particle
-  const heartTargets = generateHeartTargets(particleCount, heartScale)
+  const hScale = Math.min(width, height) * 0.028
+  const hTargets = doHeart ? generateHeartTargets(particleCount, hScale) : null
 
   const particles = []
   for (let i = 0; i < particleCount; i++) {
     particles.push({
-      x: (Math.random() - 0.5) * width,
-      y: (Math.random() - 0.5) * height,
-      // Store the random "home" position for scattering back to
-      homeX: (Math.random() - 0.5) * width,
-      homeY: (Math.random() - 0.5) * height,
-      // Heart target
-      heartX: heartTargets[i].x,
-      heartY: heartTargets[i].y,
-      // Snapshot positions for lerping
-      snapX: 0,
-      snapY: 0,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      baseAlpha: 0.25 + Math.random() * 0.45,
-      size: (2.0 + Math.random() * 2.5) * Math.min(window.devicePixelRatio, 2),
+      x: (Math.random()-0.5)*width, y: (Math.random()-0.5)*height,
+      homeX: (Math.random()-0.5)*width, homeY: (Math.random()-0.5)*height,
+      heartX: hTargets ? hTargets[i].x : 0, heartY: hTargets ? hTargets[i].y : 0,
+      snapX: 0, snapY: 0,
+      vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+      baseAlpha: (0.20 + Math.random()*0.40) * alphaMultiplier,
+      size: (2.0 + Math.random()*2.5) * Math.min(window.devicePixelRatio, 2),
       phase: Math.random() * Math.PI * 2,
     })
   }
 
-  const positions = new Float32Array(particleCount * 3)
-  const alphas = new Float32Array(particleCount)
-  const sizes = new Float32Array(particleCount)
-
+  const pos = new Float32Array(particleCount * 3)
+  const alp = new Float32Array(particleCount)
+  const siz = new Float32Array(particleCount)
   for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = particles[i].x
-    positions[i * 3 + 1] = particles[i].y
-    positions[i * 3 + 2] = 0
-    alphas[i] = particles[i].baseAlpha
-    sizes[i] = particles[i].size
+    pos[i*3] = particles[i].x; pos[i*3+1] = particles[i].y; pos[i*3+2] = 0
+    alp[i] = particles[i].baseAlpha; siz[i] = particles[i].size
   }
 
-  const pointGeo = new THREE.BufferGeometry()
-  pointGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  pointGeo.setAttribute('alpha', new THREE.BufferAttribute(alphas, 1))
-  pointGeo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1))
+  const pGeo = new THREE.BufferGeometry()
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+  pGeo.setAttribute('alpha', new THREE.BufferAttribute(alp, 1))
+  pGeo.setAttribute('aSize', new THREE.BufferAttribute(siz, 1))
+  const pMat = new THREE.ShaderMaterial({ uniforms: { uColor: { value: col3 } }, vertexShader: POINT_VERTEX, fragmentShader: POINT_FRAGMENT, transparent: true, depthWrite: false })
+  scene.add(new THREE.Points(pGeo, pMat))
 
-  const pointMat = new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: threeColor } },
-    vertexShader: POINT_VERTEX,
-    fragmentShader: POINT_FRAGMENT,
-    transparent: true,
-    depthWrite: false,
-  })
+  const lPos = new Float32Array(MAX_CONN * 6)
+  const lAlp = new Float32Array(MAX_CONN * 2)
+  const lGeo = new THREE.BufferGeometry()
+  lGeo.setAttribute('position', new THREE.BufferAttribute(lPos, 3))
+  lGeo.setAttribute('alpha', new THREE.BufferAttribute(lAlp, 1))
+  lGeo.setDrawRange(0, 0)
+  const lMat = new THREE.ShaderMaterial({ uniforms: { uColor: { value: col3 } }, vertexShader: LINE_VERTEX, fragmentShader: LINE_FRAGMENT, transparent: true, depthWrite: false })
+  scene.add(new THREE.LineSegments(lGeo, lMat))
 
-  const points = new THREE.Points(pointGeo, pointMat)
-  scene.add(points)
-
-  // ── Connection Lines ───────────────────────────────────────
-  const linePositions = new Float32Array(MAX_CONNECTIONS * 6)
-  const lineAlphas = new Float32Array(MAX_CONNECTIONS * 2)
-
-  const lineGeo = new THREE.BufferGeometry()
-  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3))
-  lineGeo.setAttribute('alpha', new THREE.BufferAttribute(lineAlphas, 1))
-  lineGeo.setDrawRange(0, 0)
-
-  const lineMat = new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: threeColor } },
-    vertexShader: LINE_VERTEX,
-    fragmentShader: LINE_FRAGMENT,
-    transparent: true,
-    depthWrite: false,
-  })
-
-  const lines = new THREE.LineSegments(lineGeo, lineMat)
-  scene.add(lines)
-
-  // ── Animation ──────────────────────────────────────────────
-  const connDistSq = connectionDistance * connectionDistance
+  const cdSq = connectionDistance * connectionDistance
   let prevPhase = 'drift'
 
   function animate(time) {
     rafId = requestAnimationFrame(animate)
+    const el = time * 0.001
+    let phase = 'drift', pp = 0
 
-    const elapsed = time * 0.001
-
-    // ── Determine cycle phase ────────────────────────────────
-    const cycleTime = elapsed % CYCLE_TOTAL
-    let phase, phaseProgress
-
-    if (cycleTime < DRIFT_DURATION) {
-      phase = 'drift'
-      phaseProgress = cycleTime / DRIFT_DURATION
-    } else if (cycleTime < DRIFT_DURATION + GATHER_DURATION) {
-      phase = 'gather'
-      phaseProgress = (cycleTime - DRIFT_DURATION) / GATHER_DURATION
-    } else if (cycleTime < DRIFT_DURATION + GATHER_DURATION + HOLD_DURATION) {
-      phase = 'hold'
-      phaseProgress = (cycleTime - DRIFT_DURATION - GATHER_DURATION) / HOLD_DURATION
-    } else {
-      phase = 'scatter'
-      phaseProgress = (cycleTime - DRIFT_DURATION - GATHER_DURATION - HOLD_DURATION) / SCATTER_DURATION
+    if (doHeart) {
+      const ct = el % CYCLE
+      if (ct < D_DUR) { phase = 'drift'; pp = ct / D_DUR }
+      else if (ct < D_DUR+G_DUR) { phase = 'gather'; pp = (ct-D_DUR)/G_DUR }
+      else if (ct < D_DUR+G_DUR+H_DUR) { phase = 'hold'; pp = (ct-D_DUR-G_DUR)/H_DUR }
+      else { phase = 'scatter'; pp = (ct-D_DUR-G_DUR-H_DUR)/S_DUR }
     }
 
-    // On phase transition, snapshot current positions for smooth lerp
     if (phase !== prevPhase) {
       for (let i = 0; i < particleCount; i++) {
         const p = particles[i]
-        p.snapX = p.x
-        p.snapY = p.y
-        // When scattering, pick a new random home to drift toward
-        if (phase === 'scatter') {
-          p.homeX = (Math.random() - 0.5) * width
-          p.homeY = (Math.random() - 0.5) * height
-        }
+        p.snapX = p.x; p.snapY = p.y
+        if (phase === 'scatter') { p.homeX = (Math.random()-0.5)*width; p.homeY = (Math.random()-0.5)*height }
       }
       prevPhase = phase
     }
 
-    // ── Update particle positions per phase ──────────────────
-    const eased = easeInOutCubic(Math.min(phaseProgress, 1))
+    const eased = easeInOutCubic(Math.min(pp, 1))
 
     for (let i = 0; i < particleCount; i++) {
       const p = particles[i]
-
       if (phase === 'drift') {
-        // Free drift
-        p.x += p.vx
-        p.y += p.vy
-
-        // Edge wrap
-        if (p.x > halfW + 30) p.x = -halfW - 30
-        if (p.x < -halfW - 30) p.x = halfW + 30
-        if (p.y > halfH + 30) p.y = -halfH - 30
-        if (p.y < -halfH - 30) p.y = halfH + 30
-
+        p.x += p.vx; p.y += p.vy
+        if (p.x > halfW+30) p.x = -halfW-30; if (p.x < -halfW-30) p.x = halfW+30
+        if (p.y > halfH+30) p.y = -halfH-30; if (p.y < -halfH-30) p.y = halfH+30
       } else if (phase === 'gather') {
-        // Lerp from snapshot to heart position
-        p.x = p.snapX + (p.heartX - p.snapX) * eased
-        p.y = p.snapY + (p.heartY - p.snapY) * eased
-
+        p.x = p.snapX + (p.heartX-p.snapX)*eased; p.y = p.snapY + (p.heartY-p.snapY)*eased
       } else if (phase === 'hold') {
-        // Gentle breathing pulse on the heart shape
-        const breatheScale = 1 + Math.sin(elapsed * 2) * 0.03
-        p.x = p.heartX * breatheScale
-        p.y = p.heartY * breatheScale
-
+        const bs = 1 + Math.sin(el*2)*0.03
+        p.x = p.heartX*bs; p.y = p.heartY*bs
       } else if (phase === 'scatter') {
-        // Lerp from snapshot (heart position) to new random home
-        p.x = p.snapX + (p.homeX - p.snapX) * eased
-        p.y = p.snapY + (p.homeY - p.snapY) * eased
+        p.x = p.snapX + (p.homeX-p.snapX)*eased; p.y = p.snapY + (p.homeY-p.snapY)*eased
       }
 
-      // Mouse repulsion (active in all phases)
       if (mouse.active) {
-        const dx = p.x - mouse.x
-        const dy = p.y - mouse.y
-        const distSq = dx * dx + dy * dy
-
-        if (distSq < MOUSE_RADIUS_SQ && distSq > 1) {
-          const dist = Math.sqrt(distSq)
-          const force = (1 - dist / MOUSE_RADIUS) * 0.9
-          p.x += (dx / dist) * force
-          p.y += (dy / dist) * force
-        }
+        const dx = p.x-mouse.x, dy = p.y-mouse.y, dSq = dx*dx+dy*dy
+        if (dSq < MR_SQ && dSq > 1) { const d = Math.sqrt(dSq), f = (1-d/MR)*0.9; p.x += dx/d*f; p.y += dy/d*f }
       }
 
-      // Breathing alpha oscillation
-      const breathe = Math.sin(elapsed * 0.5 + p.phase) * 0.12
+      const breathe = Math.sin(el*0.5 + p.phase) * 0.12
+      let boost = 0
+      if (phase === 'gather') boost = eased * 0.15
+      if (phase === 'hold') boost = 0.15
+      if (phase === 'scatter') boost = (1-eased) * 0.15
 
-      // Boost alpha during heart formation for extra glow
-      let alphaBoost = 0
-      if (phase === 'gather') alphaBoost = eased * 0.15
-      if (phase === 'hold') alphaBoost = 0.15
-      if (phase === 'scatter') alphaBoost = (1 - eased) * 0.15
-
-      // Write buffers
-      positions[i * 3] = p.x
-      positions[i * 3 + 1] = p.y
-      alphas[i] = Math.max(0.05, p.baseAlpha + breathe + alphaBoost)
+      pos[i*3] = p.x; pos[i*3+1] = p.y
+      alp[i] = Math.max(0.05, p.baseAlpha + breathe + boost)
     }
 
-    // ── Connection lines ─────────────────────────────────────
-    // Boost connection distance during heart phase for denser mesh
-    let activeConnDist = connectionDistance
-    let activeConnDistSq = connDistSq
-    let activeAlphaCap = CONNECTION_ALPHA_CAP
+    let acd = connectionDistance, acdSq = cdSq
+    let acap = BASE_CONN_ALPHA * connectionAlphaMultiplier
+    if (phase === 'gather') { acd += eased*60; acdSq = acd*acd; acap += eased*0.10 }
+    else if (phase === 'hold') { acd += 60; acdSq = acd*acd; acap += 0.10 }
+    else if (phase === 'scatter') { acd += (1-eased)*60; acdSq = acd*acd; acap += (1-eased)*0.10 }
 
-    if (phase === 'gather') {
-      activeConnDist = connectionDistance + eased * 60
-      activeConnDistSq = activeConnDist * activeConnDist
-      activeAlphaCap = CONNECTION_ALPHA_CAP + eased * 0.10
-    } else if (phase === 'hold') {
-      activeConnDist = connectionDistance + 60
-      activeConnDistSq = activeConnDist * activeConnDist
-      activeAlphaCap = CONNECTION_ALPHA_CAP + 0.10
-    } else if (phase === 'scatter') {
-      activeConnDist = connectionDistance + (1 - eased) * 60
-      activeConnDistSq = activeConnDist * activeConnDist
-      activeAlphaCap = CONNECTION_ALPHA_CAP + (1 - eased) * 0.10
-    }
-
-    const grid = buildGrid(particles, activeConnDist, width, height)
-    let connIdx = 0
-    const checked = new Set()
-
-    for (let i = 0; i < particleCount && connIdx < MAX_CONNECTIONS; i++) {
+    const cells = buildGrid(particles, acd, halfW)
+    let ci = 0
+    const chk = new Set()
+    for (let i = 0; i < particleCount && ci < MAX_CONN; i++) {
       const p = particles[i]
-      const col = Math.floor((p.x + halfW) / activeConnDist)
-      const row = Math.floor((p.y + halfW) / activeConnDist)
-      const neighbors = getNeighborIndices(grid, col, row)
-
-      for (let n = 0; n < neighbors.length && connIdx < MAX_CONNECTIONS; n++) {
-        const j = neighbors[n]
-        if (j <= i) continue
-
-        const pairKey = i * particleCount + j
-        if (checked.has(pairKey)) continue
-        checked.add(pairKey)
-
-        const q = particles[j]
-        const dx = p.x - q.x
-        const dy = p.y - q.y
-        const distSq = dx * dx + dy * dy
-
-        if (distSq < activeConnDistSq) {
-          const dist = Math.sqrt(distSq)
-          const alpha = (1 - dist / activeConnDist) * activeAlphaCap
-
-          const base = connIdx * 6
-          linePositions[base] = p.x
-          linePositions[base + 1] = p.y
-          linePositions[base + 2] = 0
-          linePositions[base + 3] = q.x
-          linePositions[base + 4] = q.y
-          linePositions[base + 5] = 0
-
-          const alphaBase = connIdx * 2
-          lineAlphas[alphaBase] = alpha
-          lineAlphas[alphaBase + 1] = alpha
-
-          connIdx++
+      const col = Math.floor((p.x+halfW)/acd), row = Math.floor((p.y+halfW)/acd)
+      const nb = getNeighbors(cells, col, row)
+      for (let n = 0; n < nb.length && ci < MAX_CONN; n++) {
+        const j = nb[n]; if (j <= i) continue
+        const pk = i*particleCount+j; if (chk.has(pk)) continue; chk.add(pk)
+        const q = particles[j], dx = p.x-q.x, dy = p.y-q.y, dSq = dx*dx+dy*dy
+        if (dSq < acdSq) {
+          const d = Math.sqrt(dSq), a = (1-d/acd)*acap, b = ci*6
+          lPos[b]=p.x; lPos[b+1]=p.y; lPos[b+2]=0; lPos[b+3]=q.x; lPos[b+4]=q.y; lPos[b+5]=0
+          lAlp[ci*2]=a; lAlp[ci*2+1]=a; ci++
         }
       }
     }
 
-    lineGeo.setDrawRange(0, connIdx * 2)
-
-    // Flag buffers for GPU upload
-    pointGeo.attributes.position.needsUpdate = true
-    pointGeo.attributes.alpha.needsUpdate = true
-    lineGeo.attributes.position.needsUpdate = true
-    lineGeo.attributes.alpha.needsUpdate = true
-
+    lGeo.setDrawRange(0, ci*2)
+    pGeo.attributes.position.needsUpdate = true; pGeo.attributes.alpha.needsUpdate = true
+    lGeo.attributes.position.needsUpdate = true; lGeo.attributes.alpha.needsUpdate = true
     renderer.render(scene, camera)
   }
 
-  // ── Start ──────────────────────────────────────────────────
-  if (prefersReducedMotion) {
-    // Render single static frame in heart formation
-    for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = heartTargets[i].x
-      positions[i * 3 + 1] = heartTargets[i].y
-      positions[i * 3 + 2] = 0
-      alphas[i] = particles[i].baseAlpha + 0.15
-    }
-    pointGeo.attributes.position.needsUpdate = true
-    pointGeo.attributes.alpha.needsUpdate = true
+  if (reducedMotion) {
+    if (hTargets) for (let i = 0; i < particleCount; i++) { pos[i*3]=hTargets[i].x; pos[i*3+1]=hTargets[i].y; alp[i]=particles[i].baseAlpha+0.15 }
+    pGeo.attributes.position.needsUpdate = true; pGeo.attributes.alpha.needsUpdate = true
     renderer.render(scene, camera)
   } else {
     rafId = requestAnimationFrame(animate)
   }
 
-  // ── Controller ─────────────────────────────────────────────
   return {
-    destroy() {
-      if (rafId !== null) cancelAnimationFrame(rafId)
-      pointGeo.dispose()
-      pointMat.dispose()
-      lineGeo.dispose()
-      lineMat.dispose()
-      renderer.dispose()
-    },
-
-    resize(newWidth, newHeight) {
-      width = newWidth
-      height = newHeight
-      halfW = width / 2
-      halfH = height / 2
-
-      renderer.setSize(width, height)
-      camera.left = -halfW
-      camera.right = halfW
-      camera.top = halfH
-      camera.bottom = -halfH
-      camera.updateProjectionMatrix()
-    },
-
-    setMouse(clientX, clientY, active) {
-      mouse.x = clientX - halfW
-      mouse.y = -(clientY - halfH)
-      mouse.active = active
-    },
+    destroy() { if (rafId!==null) cancelAnimationFrame(rafId); pGeo.dispose(); pMat.dispose(); lGeo.dispose(); lMat.dispose(); renderer.dispose() },
+    resize(w,h) { width=w; height=h; halfW=w/2; halfH=h/2; renderer.setSize(w,h); camera.left=-halfW; camera.right=halfW; camera.top=halfH; camera.bottom=-halfH; camera.updateProjectionMatrix() },
+    setMouse(cx,cy,a) { mouse.x=cx-halfW; mouse.y=-(cy-halfH); mouse.active=a },
   }
 }

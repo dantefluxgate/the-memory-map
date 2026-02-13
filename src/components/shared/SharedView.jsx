@@ -4,6 +4,7 @@ import { decodeShareData } from '../../utils/shareLink.js'
 import SharedMemoryMoment from './SharedMemoryMoment.jsx'
 import SharedMapReveal from './SharedMapReveal.jsx'
 import SharedClosing from './SharedClosing.jsx'
+import ParticleField from '../common/ParticleField.jsx'
 
 export default function SharedView() {
   const { data } = useParams()
@@ -35,7 +36,10 @@ export default function SharedView() {
   const recipientName = relationshipContext?.name
 
   return (
-    <main className="min-h-screen bg-bg-primary">
+    <main className="min-h-screen bg-bg-primary relative">
+      {/* Global particle field — heart constellation for the gift experience */}
+      <ParticleField mode="heart" intensity={0.8} fixed />
+
       {/* Opening screen — full cinematic */}
       <section className="min-h-screen flex items-center justify-center relative px-6 overflow-hidden">
         {/* Animated ambient warmth */}

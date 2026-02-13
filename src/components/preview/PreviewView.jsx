@@ -4,6 +4,7 @@ import RelationshipMap from '../create/RelationshipMap.jsx'
 import ShareControls from './ShareControls.jsx'
 import ScrollReveal from '../common/ScrollReveal.jsx'
 import Button from '../common/Button.jsx'
+import ParticleField from '../common/ParticleField.jsx'
 
 export default function PreviewView({ memories, relationshipContext, relationshipSummary, personalNote, setPersonalNote }) {
   const navigate = useNavigate()
@@ -26,8 +27,11 @@ export default function PreviewView({ memories, relationshipContext, relationshi
   const locationsExist = memories.some((m) => m.location?.coordinates)
 
   return (
-    <main className="min-h-screen bg-bg-primary">
-      <div className="max-w-[900px] mx-auto px-6 py-[80px]">
+    <main className="min-h-screen bg-bg-primary relative overflow-hidden">
+      {/* Heart constellation behind preview — building anticipation */}
+      <ParticleField mode="heart" intensity={0.5} fixed />
+
+      <div className="max-w-[900px] mx-auto px-6 py-[80px] relative z-10">
         {/* Back button */}
         <button
           onClick={() => navigate('/create')}

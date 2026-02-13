@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ParticleField from '../common/ParticleField.jsx'
 
 const relationshipTypes = [
   { id: 'partner', label: 'My Partner', sub: 'romantic love' },
@@ -31,6 +32,9 @@ export default function RelationshipIntro({ onComplete }) {
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6">
+      {/* Gentle ambient particle drift behind intro */}
+      <ParticleField mode="ambient" intensity={0.4} />
+
       {/* Ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none animate-glow-pulse"

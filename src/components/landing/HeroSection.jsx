@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import Button from '../common/Button.jsx'
-import ParticleConstellation from './ParticleConstellation.jsx'
+import ParticleField from '../common/ParticleField.jsx'
 
 export default function HeroSection() {
   const navigate = useNavigate()
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6">
-      {/* Three.js constellation — ambient particle field */}
-      <ParticleConstellation />
+      {/* Three.js constellation — heart formation cycle */}
+      <ParticleField mode="heart" intensity={0.7} />
 
       {/* Multi-layer ambient glow — cinematic depth */}
       <div

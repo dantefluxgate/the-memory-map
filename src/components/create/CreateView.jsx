@@ -4,6 +4,7 @@ import MemoryTimeline from './MemoryTimeline.jsx'
 import RelationshipMap from './RelationshipMap.jsx'
 import ActionBar from './ActionBar.jsx'
 import RelationshipIntro from './RelationshipIntro.jsx'
+import ParticleField from '../common/ParticleField.jsx'
 import useMemoryProcessor from '../../hooks/useMemoryProcessor.js'
 
 export default function CreateView({
@@ -52,6 +53,9 @@ export default function CreateView({
 
   return (
     <main className="min-h-screen bg-bg-primary relative">
+      {/* Ambient particle drift — subtle background texture */}
+      <ParticleField mode="drift" intensity={0.3} fixed />
+
       {/* Ambient background glow */}
       <div
         className="fixed top-0 right-0 w-[500px] h-[500px] pointer-events-none"
