@@ -37,9 +37,16 @@ export default function useMemoryProcessor({ addMemory, updateMemory, memories, 
       })
       .catch((error) => {
         console.error('Memory processing failed:', error)
+        // Smart fallback: extract a title from the user's own words
+        const words = text.trim().split(/\s+/)
+        const titleWords = words.slice(0, Math.min(6, words.length))
+        let fallbackTitle = titleWords.join(' ')
+        if (words.length > 6) fallbackTitle += '...'
+        fallbackTitle = fallbackTitle.charAt(0).toUpperCase() + fallbackTitle.slice(1)
+
         updateMemory(tempId, {
           loading: false,
-          title: 'A moment remembered',
+          title: fallbackTitle || 'A moment remembered',
           excerpt: text,
           emotion: 'nostalgia',
           theme_tags: ['personal'],

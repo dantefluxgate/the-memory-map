@@ -13,8 +13,8 @@ export default function PreviewView({ memories, relationshipContext, relationshi
   const particleRef = useRef(null)
 
   useEffect(() => {
-    const t1 = setTimeout(() => setHeroVisible(true), 200)
-    const t2 = setTimeout(() => setStatsVisible(true), 1400)
+    const t1 = setTimeout(() => setHeroVisible(true), 150)
+    const t2 = setTimeout(() => setStatsVisible(true), 900)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 

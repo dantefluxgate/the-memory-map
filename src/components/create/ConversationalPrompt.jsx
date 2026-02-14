@@ -19,7 +19,7 @@ export default function ConversationalPrompt({
   // Auto-focus textarea after prompt animation
   useEffect(() => {
     if (isVisible) {
-      const timer = setTimeout(() => textareaRef.current?.focus(), 900)
+      const timer = setTimeout(() => textareaRef.current?.focus(), 500)
       return () => clearTimeout(timer)
     }
   }, [isVisible])
@@ -105,13 +105,13 @@ export default function ConversationalPrompt({
           </button>
         </div>
 
-        {/* Wispr Flow hint */}
+        {/* Keyboard hint */}
         <p
           className={`mt-4 text-center font-body text-[11px] text-text-tertiary/30
             transition-all duration-500
             ${isVisible ? 'opacity-100 delay-700' : 'opacity-0'}`}
         >
-          Speak naturally with Wispr Flow, or type
+          Press ⌘+Enter to save
         </p>
       </div>
 
