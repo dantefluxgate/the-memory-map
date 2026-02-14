@@ -15,7 +15,20 @@
       "Bash(git init:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(\"C:/Program Files/GitHub CLI/gh.exe\" repo create the-memory-map --public --description \"Turn your memories into something they can see. A Valentine''s Day web app for the Wispr Flow Challenge.\" --source=. --push)",
+      "Bash(npx vite:*)",
+      "Bash(npm run server:*)",
+      "Bash(test:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(xxd:*)",
+      "Bash(npm run build:*)",
+      "Bash(git reset:*)",
+      "Bash(git mv:*)",
+      "Bash(ls:*)",
+      "Bash(dir:*)"
     ]
   }
 }
