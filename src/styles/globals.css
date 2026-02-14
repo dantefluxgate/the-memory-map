@@ -360,6 +360,190 @@ body::before {
 }
 
 /* ============================================
+   Cinematic Preview & Shared Views
+   ============================================ */
+
+@keyframes hero-title-in {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes line-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes line-grow-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes soft-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes parallax-drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(0.3deg); }
+  75% { transform: translateY(4px) rotate(-0.2deg); }
+}
+
+@keyframes map-reveal-mask {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(75% at 50% 50%);
+  }
+}
+
+@keyframes stagger-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes route-dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes number-count-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-hero-title {
+  animation: hero-title-in 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-line-grow {
+  transform-origin: left center;
+  animation: line-grow 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-line-grow-y {
+  transform-origin: top center;
+  animation: line-grow-y 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-soft-zoom {
+  animation: soft-zoom-in 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-parallax-drift {
+  animation: parallax-drift 8s ease-in-out infinite;
+}
+
+.animate-map-reveal {
+  animation: map-reveal-mask 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-stagger-up {
+  animation: stagger-slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.animate-number-in {
+  animation: number-count-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Cinematic memory card with glassmorphism and hover glow */
+.memory-card-cinematic {
+  background: rgba(17, 17, 17, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 165, 116, 0.08);
+  border-radius: 16px;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.memory-card-cinematic::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.15), transparent 50%, rgba(212, 165, 116, 0.05));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.memory-card-cinematic:hover {
+  border-color: rgba(212, 165, 116, 0.2);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.4),
+              0 0 40px rgba(212, 165, 116, 0.06),
+              inset 0 1px 0 rgba(212, 165, 116, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Map container with cinematic vignette edges */
+.map-cinematic {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.map-cinematic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 16px;
+  box-shadow: inset 0 0 80px rgba(10, 10, 10, 0.9);
+  z-index: 2;
+}
+
+/* ============================================
    Reduced Motion
    ============================================ */
 

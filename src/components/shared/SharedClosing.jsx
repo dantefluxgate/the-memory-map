@@ -1,31 +1,53 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useScrollReveal from '../../hooks/useScrollReveal.js'
 
 export default function SharedClosing({ summary }) {
-  const [ref, isVisible] = useScrollReveal({ threshold: 0.3 })
+  const [ref, isVisible] = useScrollReveal({ threshold: 0.25 })
+  const [phase, setPhase] = useState(0)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isVisible) {
+      const t1 = setTimeout(() => setPhase(1), 300)
+      const t2 = setTimeout(() => setPhase(2), 1200)
+      const t3 = setTimeout(() => setPhase(3), 2000)
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    }
+  }, [isVisible])
 
   return (
     <section
       ref={ref}
-      className="min-h-[70vh] flex items-center justify-center px-6 py-24 relative overflow-hidden"
+      className="min-h-[80vh] flex items-center justify-center px-6 py-24 relative overflow-hidden"
     >
-      {/* Final warm glow */}
+      {/* Warm glow — larger and more atmospheric */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(212,165,116,0.05) 0%, transparent 70%)',
-          opacity: isVisible ? 1 : 0,
-          transition: 'opacity 2s ease-out',
+          background: 'radial-gradient(circle, rgba(212,165,116,0.08) 0%, transparent 65%)',
+          opacity: phase >= 1 ? 1 : 0,
+          transition: 'opacity 2.5s ease-out',
         }}
       />
 
-      <div className="text-center max-w-[500px] relative z-10">
+      <div className="text-center max-w-[550px] relative z-10">
+        {/* Decorative top element */}
+        <div
+          className={`mx-auto mb-10 transition-all duration-1000 ${
+            phase >= 1 ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <div className="w-px h-12 bg-gradient-to-b from-transparent via-accent-primary/25 to-transparent mx-auto" />
+        </div>
+
+        {/* Relationship essence — the emotional climax */}
         {summary?.relationship_essence && (
           <p
-            className={`font-accent italic text-[clamp(20px,3vw,26px)] text-text-secondary leading-[1.6] transition-all duration-1200 ease-out ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            className={`font-accent italic text-[clamp(22px,4vw,30px)] text-text-secondary leading-[1.6] transition-all duration-[1500ms] ease-out ${
+              phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
+            style={{ filter: phase >= 1 ? 'blur(0)' : 'blur(4px)' }}
           >
             &ldquo;{summary.relationship_essence}&rdquo;
           </p>
@@ -34,15 +56,15 @@ export default function SharedClosing({ summary }) {
         {/* Theme tags */}
         {summary?.dominant_themes && (
           <div
-            className={`flex items-center justify-center gap-3 mt-8 flex-wrap transition-all duration-700 ${
-              isVisible ? 'opacity-100' : 'opacity-0'
+            className={`flex items-center justify-center gap-3 mt-10 flex-wrap transition-all duration-800 ${
+              phase >= 2 ? 'opacity-100' : 'opacity-0'
             }`}
-            style={{ transitionDelay: '0.4s' }}
           >
-            {summary.dominant_themes.map((theme) => (
+            {summary.dominant_themes.map((theme, i) => (
               <span
                 key={theme}
-                className="font-body text-[10px] uppercase tracking-[0.08em] text-accent-primary/50 border border-accent-primary/15 rounded-full px-4 py-1"
+                className="font-body text-[9px] uppercase tracking-[0.1em] text-accent-primary/45 border border-accent-primary/12 rounded-full px-4 py-1 animate-stagger-up"
+                style={{ animationDelay: `${i * 0.15}s`, opacity: 0, animationFillMode: 'forwards' }}
               >
                 {theme}
               </span>
@@ -52,26 +74,30 @@ export default function SharedClosing({ summary }) {
 
         {/* Decorative line */}
         <div
-          className={`w-12 h-px bg-accent-primary/20 mx-auto my-10 transition-all duration-800 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
+          className={`w-20 h-px bg-gradient-to-r from-transparent via-accent-primary/20 to-transparent mx-auto my-12 transition-all duration-1000 ${
+            phase >= 2 ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ transitionDelay: '0.6s' }}
+          style={{ transformOrigin: 'center', transform: phase >= 2 ? 'scaleX(1)' : 'scaleX(0)' }}
         />
 
+        {/* CTA section */}
         <div
-          className={`space-y-5 transition-all duration-700 ease-out ${
-            isVisible ? 'opacity-100' : 'opacity-0'
+          className={`space-y-6 transition-all duration-800 ease-out ${
+            phase >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
-          style={{ transitionDelay: '0.8s' }}
         >
-          <p className="font-body text-[11px] uppercase tracking-[0.15em] text-text-tertiary/40">
+          <p className="font-body text-[10px] uppercase tracking-[0.2em] text-text-tertiary/30">
             Made with The Memory Map
           </p>
           <button
             onClick={() => navigate('/')}
-            className="font-body text-sm text-accent-primary/80 hover:text-accent-secondary transition-all duration-300 cursor-pointer border border-accent-primary/20 rounded-full px-6 py-2 hover:border-accent-primary/40 hover:shadow-[0_0_16px_rgba(212,165,116,0.1)]"
+            className="group font-body text-sm text-accent-primary/80 hover:text-accent-secondary transition-all duration-500 cursor-pointer border border-accent-primary/20 rounded-full px-8 py-2.5 hover:border-accent-primary/40 relative overflow-hidden"
           >
-            Create Your Own Memory Map
+            {/* Hover glow effect */}
+            <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{ boxShadow: '0 0 24px rgba(212,165,116,0.12), inset 0 0 24px rgba(212,165,116,0.06)' }}
+            />
+            <span className="relative z-10">Create Your Own Memory Map</span>
           </button>
         </div>
       </div>
