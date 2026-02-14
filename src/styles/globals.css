@@ -326,6 +326,40 @@ body::before {
 }
 
 /* ============================================
+   Cinematic Create Flow
+   ============================================ */
+
+@keyframes scale-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes drift-out-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+.animate-scale-fade-in {
+  animation: scale-fade-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-drift-out-up {
+  animation: drift-out-up 0.5s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+/* ============================================
    Reduced Motion
    ============================================ */
 

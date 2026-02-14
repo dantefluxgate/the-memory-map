@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { processMemory, generateRelationshipSummary } from '../utils/api.js'
 
 export default function useMemoryProcessor({ addMemory, updateMemory, memories, setRelationshipSummary, relationshipContext }) {
-  const submitMemory = useCallback(async (text) => {
+  const submitMemory = useCallback((text) => {
     const tempId = Date.now().toString()
     const placeholderMemory = {
       id: tempId,
@@ -18,34 +18,36 @@ export default function useMemoryProcessor({ addMemory, updateMemory, memories, 
 
     addMemory(placeholderMemory)
 
-    try {
-      const processed = await processMemory(text, relationshipContext)
-      updateMemory(tempId, {
-        ...processed,
-        loading: false,
-        rawText: text,
+    // Fire-and-forget: API call runs async, updates memory when done
+    processMemory(text, relationshipContext)
+      .then((processed) => {
+        updateMemory(tempId, {
+          ...processed,
+          loading: false,
+          rawText: text,
+        })
+
+        const updatedCount = memories.length + 1
+        if (updatedCount >= 3) {
+          const allMemories = [...memories.map(m => m.rawText || m.excerpt), text]
+          generateRelationshipSummary(allMemories, relationshipContext)
+            .then((summary) => setRelationshipSummary(summary))
+            .catch((e) => console.error('Summary generation failed:', e))
+        }
+      })
+      .catch((error) => {
+        console.error('Memory processing failed:', error)
+        updateMemory(tempId, {
+          loading: false,
+          title: 'A moment remembered',
+          excerpt: text,
+          emotion: 'nostalgia',
+          theme_tags: ['personal'],
+        })
       })
 
-      const updatedCount = memories.length + 1
-      if (updatedCount >= 3) {
-        const allMemories = [...memories.map(m => m.rawText || m.excerpt), text]
-        try {
-          const summary = await generateRelationshipSummary(allMemories, relationshipContext)
-          setRelationshipSummary(summary)
-        } catch (e) {
-          console.error('Summary generation failed:', e)
-        }
-      }
-    } catch (error) {
-      console.error('Memory processing failed:', error)
-      updateMemory(tempId, {
-        loading: false,
-        title: 'A moment remembered',
-        excerpt: text,
-        emotion: 'nostalgia',
-        theme_tags: ['personal'],
-      })
-    }
+    // Return tempId synchronously so caller can track this memory
+    return tempId
   }, [addMemory, updateMemory, memories, setRelationshipSummary, relationshipContext])
 
   return { submitMemory }

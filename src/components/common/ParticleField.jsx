@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 import { createConstellationScene } from '../../lib/constellationScene.js'
 
 // Check WebGL support without tainting the render canvas
@@ -21,17 +21,27 @@ function detectWebGL() {
  *   color       — hex number, e.g. 0xD4A574
  *   className   — additional classes on the wrapper
  *   fixed       — if true, uses fixed positioning (for page-level backgrounds)
+ *
+ * Ref methods (via forwardRef):
+ *   burst()          — trigger a one-shot particle brightness/velocity flare
+ *   setHeartMode(m)  — switch between 'heart' / 'drift' / 'none' at runtime
  */
-export default function ParticleField({
+const ParticleField = forwardRef(function ParticleField({
   mode = 'heart',
   intensity = 0.6,
   color = 0xd4a574,
   className = '',
   fixed = false,
-}) {
+}, ref) {
   const canvasRef = useRef(null)
   const sceneRef = useRef(null)
   const [supported] = useState(() => detectWebGL())
+
+  // Expose imperative methods to parent via ref
+  useImperativeHandle(ref, () => ({
+    burst: () => sceneRef.current?.burst(),
+    setHeartMode: (m) => sceneRef.current?.setHeartMode(m),
+  }))
 
   useEffect(() => {
     if (!supported) return
@@ -113,4 +123,6 @@ export default function ParticleField({
       aria-hidden="true"
     />
   )
-}
+})
+
+export default ParticleField

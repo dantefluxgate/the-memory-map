@@ -1,12 +1,21 @@
-import { useState, useRef, useCallback } from 'react'
-import MemoryInput from './MemoryInput.jsx'
-import MemoryTimeline from './MemoryTimeline.jsx'
-import RelationshipMap from './RelationshipMap.jsx'
-import ActionBar from './ActionBar.jsx'
-import RelationshipIntro from './RelationshipIntro.jsx'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import ParticleField from '../common/ParticleField.jsx'
+import RelationshipIntro from './RelationshipIntro.jsx'
+import ConversationalPrompt from './ConversationalPrompt.jsx'
+import MemoryReveal from './MemoryReveal.jsx'
+import CompletionMoment from './CompletionMoment.jsx'
 import useMemoryProcessor from '../../hooks/useMemoryProcessor.js'
+import { getPrompt } from './promptSequence.js'
 
+/**
+ * Cinematic memory creation flow.
+ *
+ * State machine:
+ *   prompting  → user submits text  → processing (particle burst fires)
+ *   processing → API returns        → revealing (glass card appears)
+ *   revealing  → user clicks Continue → prompting (next prompt) OR complete (≥3 memories)
+ *   complete   → user clicks "Add more" → prompting
+ */
 export default function CreateView({
   memories,
   addMemory,
@@ -17,8 +26,12 @@ export default function CreateView({
   relationshipSummary,
   setRelationshipSummary,
 }) {
-  const [isProcessing, setIsProcessing] = useState(false)
-  const inputRef = useRef(null)
+  const [phase, setPhase] = useState('prompting')
+  const [currentPrompt, setCurrentPrompt] = useState('')
+  const [revealingMemoryId, setRevealingMemoryId] = useState(null)
+  const [transitionKey, setTransitionKey] = useState(0)
+  const particleRef = useRef(null)
+
   const { submitMemory } = useMemoryProcessor({
     addMemory,
     updateMemory,
@@ -27,18 +40,53 @@ export default function CreateView({
     relationshipContext,
   })
 
-  const handleSubmit = async (text) => {
-    setIsProcessing(true)
-    await submitMemory(text)
-    setIsProcessing(false)
-  }
+  // Set initial prompt when relationship context arrives
+  useEffect(() => {
+    if (relationshipContext && !currentPrompt) {
+      setCurrentPrompt(getPrompt(memories.length, relationshipContext.name))
+    }
+  }, [relationshipContext])
 
-  const scrollToInput = useCallback(() => {
-    inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    setTimeout(() => {
-      inputRef.current?.querySelector('textarea')?.focus()
-    }, 400)
-  }, [])
+  // Watch for revealing memory to finish loading → transition to reveal
+  const revealingMemory = memories.find((m) => m.id === revealingMemoryId)
+
+  useEffect(() => {
+    if (phase === 'processing' && revealingMemory && !revealingMemory.loading) {
+      setPhase('revealing')
+    }
+  }, [phase, revealingMemory?.loading])
+
+  const handleSubmit = useCallback(
+    (text) => {
+      // Fire particle burst
+      particleRef.current?.burst()
+
+      // Submit memory (synchronous: returns tempId, API runs async)
+      const tempId = submitMemory(text)
+      setRevealingMemoryId(tempId)
+      setPhase('processing')
+    },
+    [submitMemory]
+  )
+
+  const handleRevealContinue = useCallback(() => {
+    if (memories.length >= 3) {
+      // Trigger heart formation for the completion moment
+      particleRef.current?.setHeartMode('heart')
+      setPhase('complete')
+    } else {
+      setCurrentPrompt(getPrompt(memories.length, relationshipContext.name))
+      setTransitionKey((k) => k + 1)
+      setPhase('prompting')
+    }
+  }, [memories.length, relationshipContext])
+
+  const handleAddMore = useCallback(() => {
+    particleRef.current?.setHeartMode('none')
+    setCurrentPrompt(getPrompt(memories.length, relationshipContext.name))
+    setTransitionKey((k) => k + 1)
+    setPhase('prompting')
+  }, [memories.length, relationshipContext])
 
   // Show intro step if no relationship context set yet
   if (!relationshipContext) {
@@ -49,95 +97,66 @@ export default function CreateView({
     )
   }
 
-  const progress = Math.min(memories.length / 5, 1) * 100
-
   return (
-    <main className="min-h-screen bg-bg-primary relative">
-      {/* Ambient particle drift — subtle background texture */}
-      <ParticleField mode="drift" intensity={0.3} fixed />
+    <main className="min-h-screen bg-bg-primary relative overflow-hidden">
+      {/* Full-screen particle backdrop */}
+      <ParticleField
+        ref={particleRef}
+        mode={phase === 'complete' ? 'heart' : 'drift'}
+        intensity={phase === 'processing' ? 0.8 : phase === 'complete' ? 0.7 : 0.5}
+        fixed
+      />
 
-      {/* Ambient background glow */}
+      {/* Ambient center glow */}
       <div
-        className="fixed top-0 right-0 w-[500px] h-[500px] pointer-events-none"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]
+          rounded-full pointer-events-none animate-glow-pulse"
         style={{
-          background: 'radial-gradient(circle at 80% 20%, rgba(212,165,116,0.03) 0%, transparent 60%)',
+          background:
+            'radial-gradient(circle, rgba(212,165,116,0.05) 0%, transparent 60%)',
         }}
       />
 
-      <div className="max-w-[1200px] mx-auto px-6 py-12">
-        {/* Header */}
-        <div className="mb-2">
-          <h1 className="font-display text-3xl font-medium text-text-primary">
-            Memories of {relationshipContext.name}
-          </h1>
-          {relationshipSummary?.timeline_title ? (
-            <p className="font-accent italic text-lg text-text-secondary mt-1">
-              {relationshipSummary.timeline_title}
+      {/* Phase: Conversational Prompt */}
+      {phase === 'prompting' && (
+        <ConversationalPrompt
+          key={transitionKey}
+          prompt={currentPrompt}
+          onSubmit={handleSubmit}
+          isProcessing={false}
+          memoryIndex={memories.length}
+        />
+      )}
+
+      {/* Phase: Processing (particle burst active, waiting for API) */}
+      {phase === 'processing' && revealingMemory?.loading && (
+        <div className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10">
+          <div className="text-center">
+            <div className="w-2 h-2 rounded-full bg-accent-primary animate-breathe mx-auto mb-4" />
+            <p className="font-accent text-lg text-text-tertiary italic animate-fade-in">
+              Understanding your memory...
             </p>
-          ) : (
-            <p className="font-body text-sm text-text-tertiary/50 mt-1">
-              {relationshipContext.typeLabel}
-            </p>
-          )}
-        </div>
-
-        {/* Progress bar */}
-        <div className="mb-10">
-          <div className="memory-progress">
-            <div
-              className="memory-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="font-body text-[11px] text-text-tertiary/50">
-              {memories.length} {memories.length === 1 ? 'memory' : 'memories'}
-            </span>
-            {memories.length < 3 && (
-              <span className="font-body text-[11px] text-text-tertiary/50">
-                {3 - memories.length} more to unlock preview
-              </span>
-            )}
           </div>
         </div>
+      )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.65fr] gap-10">
-          {/* Left column: input + timeline */}
-          <div>
-            <div ref={inputRef} className="sticky top-6 z-20 bg-bg-primary/80 backdrop-blur-md pb-6">
-              <MemoryInput
-                onSubmit={handleSubmit}
-                isProcessing={isProcessing}
-                recipientName={relationshipContext.name}
-              />
-            </div>
-            <MemoryTimeline memories={memories} onDelete={deleteMemory} />
-            <ActionBar memoryCount={memories.length} onScrollToInput={scrollToInput} />
-          </div>
+      {/* Phase: Memory Reveal */}
+      {(phase === 'revealing' || (phase === 'processing' && revealingMemory && !revealingMemory.loading)) &&
+        revealingMemory && (
+          <MemoryReveal
+            memory={revealingMemory}
+            onContinue={handleRevealContinue}
+          />
+        )}
 
-          {/* Right column: map */}
-          <div className="hidden lg:block">
-            <div className="sticky top-6 h-[calc(100vh-96px)] rounded-lg overflow-hidden">
-              <RelationshipMap memories={memories} />
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile map (collapsible) */}
-        <div className="lg:hidden mt-8">
-          <details className="group">
-            <summary className="font-body text-sm text-accent-primary cursor-pointer list-none flex items-center gap-2 py-3">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 group-open:rotate-90">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-              View Map
-            </summary>
-            <div className="mt-2 h-[350px] rounded-lg overflow-hidden">
-              <RelationshipMap memories={memories} />
-            </div>
-          </details>
-        </div>
-      </div>
+      {/* Phase: Completion — heart constellation active */}
+      {phase === 'complete' && (
+        <CompletionMoment
+          memoryCount={memories.length}
+          recipientName={relationshipContext.name}
+          onAddMore={handleAddMore}
+        />
+      )}
     </main>
   )
 }

@@ -114,8 +114,9 @@ export function createConstellationScene(canvas, options = {}) {
   const D_DUR = 10, G_DUR = 3, H_DUR = 4, S_DUR = 2.5
   const CYCLE = D_DUR + G_DUR + H_DUR + S_DUR
 
-  const doHeart = heartMode === 'heart'
+  let doHeart = heartMode === 'heart'
   const mouse = { x: 0, y: 0, active: false }
+  const burstState = { active: false, startTime: 0, duration: 1.5 }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' })
@@ -128,7 +129,7 @@ export function createConstellationScene(canvas, options = {}) {
   const col3 = new THREE.Color(color)
 
   const hScale = Math.min(width, height) * 0.028
-  const hTargets = doHeart ? generateHeartTargets(particleCount, hScale) : null
+  let hTargets = doHeart ? generateHeartTargets(particleCount, hScale) : null
 
   const particles = []
   for (let i = 0; i < particleCount; i++) {
@@ -221,8 +222,20 @@ export function createConstellationScene(canvas, options = {}) {
       if (phase === 'hold') boost = 0.15
       if (phase === 'scatter') boost = (1-eased) * 0.15
 
+      // Burst boost: sharp rise, slow fall over 1.5s
+      let burstBoost = 0
+      if (burstState.active) {
+        const burstElapsed = el - burstState.startTime
+        if (burstElapsed > burstState.duration) {
+          burstState.active = false
+        } else {
+          const bp = burstElapsed / burstState.duration
+          burstBoost = (1 - bp) * 0.5 * Math.sin(bp * Math.PI)
+        }
+      }
+
       pos[i*3] = p.x; pos[i*3+1] = p.y
-      alp[i] = Math.max(0.05, p.baseAlpha + breathe + boost)
+      alp[i] = Math.max(0.05, p.baseAlpha + breathe + boost + burstBoost)
     }
 
     let acd = connectionDistance, acdSq = cdSq
@@ -230,6 +243,12 @@ export function createConstellationScene(canvas, options = {}) {
     if (phase === 'gather') { acd += eased*60; acdSq = acd*acd; acap += eased*0.10 }
     else if (phase === 'hold') { acd += 60; acdSq = acd*acd; acap += 0.10 }
     else if (phase === 'scatter') { acd += (1-eased)*60; acdSq = acd*acd; acap += (1-eased)*0.10 }
+    // Burst widens connections temporarily
+    if (burstState.active) {
+      const bp = (el - burstState.startTime) / burstState.duration
+      const burstMult = (1 - bp) * Math.sin(bp * Math.PI)
+      acd += burstMult * 80; acdSq = acd * acd; acap += burstMult * 0.20
+    }
 
     const cells = buildGrid(particles, acd, halfW)
     let ci = 0
@@ -268,5 +287,28 @@ export function createConstellationScene(canvas, options = {}) {
     destroy() { if (rafId!==null) cancelAnimationFrame(rafId); pGeo.dispose(); pMat.dispose(); lGeo.dispose(); lMat.dispose(); renderer.dispose() },
     resize(w,h) { width=w; height=h; halfW=w/2; halfH=h/2; renderer.setSize(w,h); camera.left=-halfW; camera.right=halfW; camera.top=halfH; camera.bottom=-halfH; camera.updateProjectionMatrix() },
     setMouse(cx,cy,a) { mouse.x=cx-halfW; mouse.y=-(cy-halfH); mouse.active=a },
+    burst() {
+      burstState.active = true
+      burstState.startTime = performance.now() * 0.001
+      // Outward velocity push from center
+      for (let i = 0; i < particleCount; i++) {
+        const p = particles[i]
+        const dx = p.x, dy = p.y
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1
+        p.vx += (dx / dist) * 1.2
+        p.vy += (dy / dist) * 1.2
+      }
+    },
+    setHeartMode(newMode) {
+      doHeart = newMode === 'heart'
+      if (doHeart && !hTargets) {
+        // Generate heart targets on first switch to heart mode
+        hTargets = generateHeartTargets(particleCount, hScale)
+        for (let i = 0; i < particleCount; i++) {
+          particles[i].heartX = hTargets[i].x
+          particles[i].heartY = hTargets[i].y
+        }
+      }
+    },
   }
 }
