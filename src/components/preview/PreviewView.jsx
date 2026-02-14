@@ -159,32 +159,28 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       <section className="relative z-10 pb-12">
         {/* Section header */}
         <ScrollReveal>
-          <p className="text-center font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/40 mb-16">
-            Each memory, in your words
-          </p>
+          <div className="text-center mb-16">
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40 mb-3">
+              Each memory, in your words
+            </p>
+            <div className="w-10 h-px bg-gradient-to-r from-transparent via-accent-primary/25 to-transparent mx-auto" />
+          </div>
         </ScrollReveal>
 
-        {/* Vertical timeline spine */}
-        <div className="max-w-[700px] mx-auto relative px-6">
-          {/* The spine line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-accent-primary/20 via-accent-primary/10 to-transparent -translate-x-1/2 hidden md:block" />
-
+        {/* Centered card stack — clean, focused layout */}
+        <div className="max-w-[560px] mx-auto px-6">
           {memories.map((memory, index) => (
-            <ScrollReveal key={memory.id} delay={index * 0.1}>
-              <div
-                className={`relative mb-16 md:mb-20 ${
-                  index % 2 === 0 ? 'md:pr-[calc(50%+32px)]' : 'md:pl-[calc(50%+32px)]'
-                }`}
-              >
-                {/* Timeline node */}
-                <div className="hidden md:block absolute left-1/2 top-8 -translate-x-1/2 z-10">
-                  <div className="w-3 h-3 rounded-full bg-accent-primary/80 shadow-[0_0_12px_rgba(212,165,116,0.4)]" />
-                </div>
+            <ScrollReveal key={memory.id} delay={index * 0.08}>
+              <div className="mb-10 relative">
+                {/* Connecting line between cards */}
+                {index < memories.length - 1 && (
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full w-px h-10 bg-gradient-to-b from-accent-primary/15 to-transparent" />
+                )}
 
-                {/* Memory card */}
-                <div className="memory-card-cinematic p-7 md:p-8">
-                  {/* Top row: emotion + date */}
-                  <div className="flex items-center justify-between mb-4">
+                {/* Memory card — centered, clean */}
+                <div className="memory-card-cinematic p-8 text-center">
+                  {/* Emotion + date row */}
+                  <div className="flex items-center justify-center gap-4 mb-5">
                     {memory.emotion && (
                       <span className="font-body text-[9px] uppercase tracking-[0.12em] text-accent-primary/70 border border-accent-primary/15 rounded-full px-3 py-1">
                         {memory.emotion}
@@ -198,20 +194,23 @@ export default function PreviewView({ memories, relationshipContext, relationshi
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-display text-[clamp(20px,3vw,26px)] font-medium text-text-primary mb-3 leading-[1.2]">
+                  <h3 className="font-display text-[clamp(22px,3.5vw,28px)] font-medium text-text-primary mb-4 leading-[1.2]">
                     {memory.title}
                   </h3>
 
+                  {/* Decorative line */}
+                  <div className="w-8 h-px bg-accent-primary/20 mx-auto mb-4" />
+
                   {/* Excerpt */}
-                  <p className="font-accent text-[clamp(15px,2vw,18px)] text-text-secondary/85 leading-[1.7] mb-5">
+                  <p className="font-accent text-[clamp(15px,2.2vw,19px)] text-text-secondary/85 leading-[1.8] mb-5 max-w-[480px] mx-auto">
                     &ldquo;{memory.excerpt}&rdquo;
                   </p>
 
-                  {/* Bottom: location + tags */}
-                  <div className="flex items-center gap-3 flex-wrap">
+                  {/* Location + tags — centered */}
+                  <div className="flex items-center justify-center gap-3 flex-wrap">
                     {memory.location?.place_name && (
                       <span className="font-body text-[10px] text-text-tertiary/60 flex items-center gap-1.5">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0 text-accent-primary/50">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-accent-primary/50">
                           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                           <circle cx="12" cy="10" r="3" />
                         </svg>
