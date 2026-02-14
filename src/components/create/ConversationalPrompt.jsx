@@ -39,7 +39,7 @@ export default function ConversationalPrompt({
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSubmit()
     }
@@ -113,7 +113,7 @@ export default function ConversationalPrompt({
             transition-all duration-500
             ${isVisible ? 'opacity-100 delay-700' : 'opacity-0'}`}
         >
-          Press ⌘+Enter to save
+          Press Enter to save
         </p>
       </div>
 

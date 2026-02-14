@@ -648,7 +648,7 @@ body::before {
 }
 
 .animate-float-heart {
-  animation: float-heart linear forwards;
+  animation: float-heart 15s linear forwards;
 }
 
 .animate-heart-beat {
@@ -699,7 +699,7 @@ body::before {
 .floating-hearts .heart {
   position: absolute;
   bottom: -20px;
-  animation: float-heart linear infinite;
+  animation: float-heart 15s linear infinite;
 }
 
 /* ============================================
