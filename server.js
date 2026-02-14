@@ -11,10 +11,8 @@ const __dirname = dirname(__filename)
 const app = express()
 app.use(express.json())
 
-// In production, serve the Vite build output
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(__dirname, 'dist')))
-}
+// Serve the Vite build output (always, for Replit compatibility)
+app.use(express.static(join(__dirname, 'dist')))
 
 const anthropic = new Anthropic()
 
@@ -109,14 +107,13 @@ app.post('/api/relationship-summary', async (req, res) => {
   }
 })
 
-// In production, serve index.html for all non-API routes (SPA fallback)
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, 'dist', 'index.html'))
-  })
-}
+// SPA fallback: serve index.html for all non-API routes
+// Express v5 requires /{*path} syntax for catch-all routes
+app.get('/{*path}', (req, res) => {
+  res.sendFile(join(__dirname, 'dist', 'index.html'))
+})
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 5000
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)
 })
