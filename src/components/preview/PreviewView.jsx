@@ -6,6 +6,7 @@ import ScrollReveal from '../common/ScrollReveal.jsx'
 import ParticleField from '../common/ParticleField.jsx'
 import FloatingHearts from '../common/FloatingHearts.jsx'
 import HeartDivider from '../common/HeartDivider.jsx'
+import ExpandableMemoryCard from './ExpandableMemoryCard.jsx'
 import Button from '../common/Button.jsx'
 
 export default function PreviewView({ memories, relationshipContext, relationshipSummary, personalNote, setPersonalNote }) {
@@ -171,7 +172,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       </section>
 
       {/* ═══════════════ MEMORY CARDS ═══════════════ */}
-      <section className="relative z-10 pb-12">
+      <section className="relative z-10 pb-12 w-full flex flex-col items-center">
         {/* Section header with heart */}
         <ScrollReveal>
           <div className="text-center mb-16">
@@ -182,8 +183,8 @@ export default function PreviewView({ memories, relationshipContext, relationshi
           </div>
         </ScrollReveal>
 
-        {/* Centered card stack — clean, focused layout */}
-        <div className="max-w-[560px] mx-auto px-6">
+        {/* Centered card stack — interactive expandable cards */}
+        <div className="max-w-[560px] w-full mx-auto px-6">
           {memories.map((memory, index) => (
             <ScrollReveal key={memory.id} delay={index * 0.08}>
               <div className="mb-10 relative">
@@ -192,62 +193,11 @@ export default function PreviewView({ memories, relationshipContext, relationshi
                   <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full w-px h-10 bg-gradient-to-b from-accent-primary/15 to-transparent" />
                 )}
 
-                {/* Memory card — centered, clean */}
-                <div className="memory-card-cinematic p-8 text-center">
-                  {/* Emotion + date row */}
-                  <div className="flex items-center justify-center gap-4 mb-5">
-                    {memory.emotion && (
-                      <span className="font-body text-[9px] uppercase tracking-[0.12em] text-accent-primary/70 border border-accent-primary/15 rounded-full px-3 py-1">
-                        {memory.emotion}
-                      </span>
-                    )}
-                    {memory.date_hint && (
-                      <span className="font-body text-[10px] uppercase tracking-[0.08em] text-text-tertiary/50">
-                        {memory.date_hint}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="font-display text-[clamp(22px,3.5vw,28px)] font-medium text-text-primary mb-4 leading-[1.2]">
-                    {memory.title}
-                  </h3>
-
-                  {/* Heart decorative line */}
-                  <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-6 h-px bg-gradient-to-r from-transparent to-accent-primary/20" />
-                    <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/25">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                    <div className="w-6 h-px bg-gradient-to-l from-transparent to-accent-primary/20" />
-                  </div>
-
-                  {/* Excerpt */}
-                  <p className="font-accent text-[clamp(15px,2.2vw,19px)] text-text-secondary/85 leading-[1.8] mb-5 max-w-[480px] mx-auto">
-                    &ldquo;{memory.excerpt}&rdquo;
-                  </p>
-
-                  {/* Location + tags — centered */}
-                  <div className="flex items-center justify-center gap-3 flex-wrap">
-                    {memory.location?.place_name && (
-                      <span className="font-body text-[10px] text-text-tertiary/60 flex items-center gap-1.5">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="shrink-0 text-accent-primary/50">
-                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                          <circle cx="12" cy="10" r="3" />
-                        </svg>
-                        {memory.location.place_name}
-                      </span>
-                    )}
-                    {memory.theme_tags?.map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-body text-[9px] text-text-tertiary/30 bg-bg-elevated/30 rounded-full px-2.5 py-0.5"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <ExpandableMemoryCard
+                  memory={memory}
+                  index={index}
+                  recipientName={name}
+                />
               </div>
             </ScrollReveal>
           ))}

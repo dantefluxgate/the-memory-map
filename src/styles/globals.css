@@ -526,6 +526,30 @@ body::before {
   transform: translateY(-4px);
 }
 
+/* Interactive card — clickable with enhanced states */
+.memory-card-cinematic[role="button"] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.memory-card-cinematic[role="button"]:hover {
+  transform: translateY(-3px);
+}
+
+.memory-card-cinematic[role="button"]:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+.memory-card-cinematic[aria-expanded="true"] {
+  background: rgba(17, 17, 17, 0.55);
+  border-color: rgba(212, 165, 116, 0.18);
+}
+
+.memory-card-cinematic[aria-expanded="true"]:hover {
+  transform: translateY(0);
+}
+
 /* Map container with cinematic vignette edges */
 .map-cinematic {
   position: relative;
