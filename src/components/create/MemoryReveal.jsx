@@ -34,6 +34,11 @@ export default function MemoryReveal({ memory, onContinue }) {
           ${phase === 1 ? 'opacity-100 translate-y-0 scale-100' : ''}
           ${phase === 2 ? 'opacity-0 -translate-y-6 scale-95' : ''}`}
       >
+        {/* Tiny heart accent above title */}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30 mb-3 mx-auto heart-glow">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+
         <h3 className="font-display text-2xl font-medium text-text-primary mb-2">
           {memory.title}
         </h3>

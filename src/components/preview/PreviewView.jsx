@@ -4,6 +4,8 @@ import RelationshipMap from '../create/RelationshipMap.jsx'
 import ShareControls from './ShareControls.jsx'
 import ScrollReveal from '../common/ScrollReveal.jsx'
 import ParticleField from '../common/ParticleField.jsx'
+import FloatingHearts from '../common/FloatingHearts.jsx'
+import HeartDivider from '../common/HeartDivider.jsx'
 import Button from '../common/Button.jsx'
 
 export default function PreviewView({ memories, relationshipContext, relationshipSummary, personalNote, setPersonalNote }) {
@@ -45,6 +47,9 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       {/* Heart constellation — building anticipation */}
       <ParticleField ref={particleRef} mode="heart" intensity={0.6} fixed />
 
+      {/* Floating hearts — Valentine's Day atmosphere */}
+      <FloatingHearts count={14} opacity={0.06} />
+
       {/* ═══════════════ HERO SECTION ═══════════════ */}
       <section className="min-h-screen flex flex-col items-center justify-center relative px-6">
         {/* Ambient warmth glow */}
@@ -67,12 +72,22 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         </button>
 
         <div className="text-center max-w-[600px] relative z-10">
-          {/* Decorative line above */}
+          {/* Valentine's heart above title */}
           <div
-            className={`w-px h-12 bg-gradient-to-b from-transparent via-accent-primary/30 to-transparent mx-auto mb-8 transition-all duration-1000 ${
-              heroVisible ? 'opacity-100' : 'opacity-0'
+            className={`mb-6 transition-all duration-1000 ${
+              heroVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
             }`}
-          />
+          >
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="mx-auto text-accent-primary/40 heart-glow animate-heart-beat"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </div>
 
           {/* Title */}
           <h1
@@ -157,13 +172,13 @@ export default function PreviewView({ memories, relationshipContext, relationshi
 
       {/* ═══════════════ MEMORY CARDS ═══════════════ */}
       <section className="relative z-10 pb-12">
-        {/* Section header */}
+        {/* Section header with heart */}
         <ScrollReveal>
           <div className="text-center mb-16">
-            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40 mb-3">
+            <HeartDivider size={12} />
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40 mt-2">
               Each memory, in your words
             </p>
-            <div className="w-10 h-px bg-gradient-to-r from-transparent via-accent-primary/25 to-transparent mx-auto" />
           </div>
         </ScrollReveal>
 
@@ -198,8 +213,14 @@ export default function PreviewView({ memories, relationshipContext, relationshi
                     {memory.title}
                   </h3>
 
-                  {/* Decorative line */}
-                  <div className="w-8 h-px bg-accent-primary/20 mx-auto mb-4" />
+                  {/* Heart decorative line */}
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="w-6 h-px bg-gradient-to-r from-transparent to-accent-primary/20" />
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/25">
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                    <div className="w-6 h-px bg-gradient-to-l from-transparent to-accent-primary/20" />
+                  </div>
 
                   {/* Excerpt */}
                   <p className="font-accent text-[clamp(15px,2.2vw,19px)] text-text-secondary/85 leading-[1.8] mb-5 max-w-[480px] mx-auto">
@@ -238,10 +259,10 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         <section className="relative z-10 py-20">
           <ScrollReveal>
             <div className="text-center mb-10">
-              <p className="font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/40 mb-3">
+              <HeartDivider size={12} />
+              <p className="font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/40 mt-2">
                 Your Journey Together
               </p>
-              <div className="w-8 h-px bg-accent-primary/20 mx-auto" />
             </div>
           </ScrollReveal>
 
@@ -300,16 +321,19 @@ export default function PreviewView({ memories, relationshipContext, relationshi
 
       {/* ═══════════════ SHARE ═══════════════ */}
       <section className="relative z-10 pb-24">
-        {/* Decorative line */}
-        <div className="w-px h-16 bg-gradient-to-b from-transparent via-accent-primary/20 to-transparent mx-auto mb-12" />
+        {/* Heart divider before share */}
+        <HeartDivider size={16} className="mb-8" />
 
         <ScrollReveal>
           <div className="text-center mb-6">
             <p className="font-accent text-[clamp(20px,3vw,28px)] text-text-secondary/70 mb-2">
               Ready to send this to {name}?
             </p>
-            <p className="font-body text-xs text-text-tertiary/40">
-              Every point is a real moment, in your own words.
+            <p className="font-body text-xs text-text-tertiary/40 flex items-center justify-center gap-2">
+              Every point is a real moment, in your own words
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
             </p>
           </div>
         </ScrollReveal>

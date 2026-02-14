@@ -5,6 +5,8 @@ import SharedMemoryMoment from './SharedMemoryMoment.jsx'
 import SharedMapReveal from './SharedMapReveal.jsx'
 import SharedClosing from './SharedClosing.jsx'
 import ParticleField from '../common/ParticleField.jsx'
+import FloatingHearts from '../common/FloatingHearts.jsx'
+import HeartDivider from '../common/HeartDivider.jsx'
 
 export default function SharedView() {
   const { data } = useParams()
@@ -40,6 +42,9 @@ export default function SharedView() {
       {/* Global particle field — heart constellation for the gift experience */}
       <ParticleField mode="heart" intensity={0.8} fixed />
 
+      {/* Floating hearts — Valentine's Day atmosphere */}
+      <FloatingHearts count={16} opacity={0.07} />
+
       {/* Opening screen — full cinematic */}
       <section className="min-h-screen flex items-center justify-center relative px-6 overflow-hidden">
         {/* Animated ambient warmth */}
@@ -58,6 +63,23 @@ export default function SharedView() {
         />
 
         <div className="text-center max-w-[500px] relative z-10">
+          {/* Valentine's heart intro */}
+          <div
+            className={`mb-6 transition-all duration-1000 ${
+              phase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+            }`}
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="mx-auto text-accent-primary/50 heart-glow animate-heart-beat"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </div>
+
           <p
             className={`font-accent text-[clamp(26px,5vw,32px)] font-light text-text-primary leading-[1.3] transition-all duration-[1500ms] ease-out ${
               phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
@@ -127,10 +149,8 @@ export default function SharedView() {
         </div>
       </section>
 
-      {/* Divider before memories */}
-      <div className="flex items-center justify-center py-8">
-        <div className="w-px h-16 bg-gradient-to-b from-transparent via-accent-primary/20 to-transparent" />
-      </div>
+      {/* Heart divider before memories */}
+      <HeartDivider size={14} className="mb-4" />
 
       {/* Memory moments */}
       {memories.map((memory, index) => (

@@ -32,13 +32,21 @@ export default function SharedClosing({ summary }) {
       />
 
       <div className="text-center max-w-[550px] relative z-10">
-        {/* Decorative top element */}
+        {/* Valentine's heart top element */}
         <div
           className={`mx-auto mb-10 transition-all duration-1000 ${
-            phase >= 1 ? 'opacity-100' : 'opacity-0'
+            phase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
           }`}
         >
-          <div className="w-px h-12 bg-gradient-to-b from-transparent via-accent-primary/25 to-transparent mx-auto" />
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="mx-auto text-accent-primary/40 heart-glow animate-heart-beat"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </div>
 
         {/* Relationship essence — the emotional climax */}
@@ -86,8 +94,12 @@ export default function SharedClosing({ summary }) {
             phase >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <p className="font-body text-[10px] uppercase tracking-[0.2em] text-text-tertiary/30">
-            Made with The Memory Map
+          <p className="font-body text-[10px] uppercase tracking-[0.2em] text-text-tertiary/30 flex items-center justify-center gap-2">
+            Made with
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/40">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            using The Memory Map
           </p>
           <button
             onClick={() => navigate('/')}

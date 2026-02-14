@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ParticleField from '../common/ParticleField.jsx'
+import FloatingHearts from '../common/FloatingHearts.jsx'
 
 const relationshipTypes = [
   { id: 'partner', label: 'My Partner', sub: 'romantic love' },
@@ -35,6 +36,9 @@ export default function RelationshipIntro({ onComplete }) {
       {/* Gentle ambient particle drift behind intro */}
       <ParticleField mode="ambient" intensity={0.4} />
 
+      {/* Floating hearts — Valentine's Day atmosphere */}
+      <FloatingHearts count={8} opacity={0.04} />
+
       {/* Ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none animate-glow-pulse"
@@ -51,6 +55,17 @@ export default function RelationshipIntro({ onComplete }) {
         {/* Phase 0: Ask for name */}
         {phase === 0 && (
           <form onSubmit={handleNameSubmit} className="animate-fade-up" style={{ animationFillMode: 'forwards' }}>
+            {/* Valentine's heart */}
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="mx-auto mb-6 text-accent-primary/40 heart-glow animate-heart-beat"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+
             <p className="font-accent text-[clamp(24px,4vw,32px)] font-light text-text-primary leading-[1.3] mb-10">
               Who is this Memory Map for?
             </p>
@@ -115,7 +130,16 @@ export default function RelationshipIntro({ onComplete }) {
 
         {/* Phase 2: Selected confirmation (brief flash) */}
         {phase === 2 && selectedType && (
-          <div className="animate-fade-in">
+          <div className="animate-fade-in text-center">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="mx-auto mb-4 text-accent-primary/50 animate-heart-fade-in heart-glow"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
             <p className="font-accent text-[clamp(22px,4vw,30px)] font-light text-text-primary">
               A Memory Map for <span className="text-accent-primary">{name.trim()}</span>
             </p>

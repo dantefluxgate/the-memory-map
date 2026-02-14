@@ -25,6 +25,23 @@ export default function CompletionMoment({ memoryCount, recipientName, onAddMore
       />
 
       <div className="text-center max-w-[500px] relative z-10">
+        {/* Heart above count */}
+        <div
+          className={`mb-4 transition-all duration-700 ${
+            phase >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+          }`}
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="mx-auto text-accent-primary/50 heart-glow animate-heart-beat"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </div>
+
         {/* Memory count */}
         <div
           className={`mb-6 transition-all duration-700 ${
@@ -37,13 +54,18 @@ export default function CompletionMoment({ memoryCount, recipientName, onAddMore
           </p>
         </div>
 
-        {/* Decorative line */}
+        {/* Heart divider line */}
         <div
-          className={`w-12 h-px bg-gradient-to-r from-transparent via-accent-primary/30 to-transparent mx-auto mb-8 transition-all duration-800 ${
+          className={`flex items-center justify-center gap-3 mb-8 transition-all duration-800 ${
             phase >= 1 ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ transformOrigin: 'center', transform: phase >= 1 ? 'scaleX(1)' : 'scaleX(0)' }}
-        />
+        >
+          <div className="w-8 h-px bg-gradient-to-r from-transparent to-accent-primary/25" />
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <div className="w-8 h-px bg-gradient-to-l from-transparent to-accent-primary/25" />
+        </div>
 
         {/* Message */}
         <p
@@ -69,7 +91,12 @@ export default function CompletionMoment({ memoryCount, recipientName, onAddMore
               className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
               style={{ boxShadow: '0 0 30px rgba(212,165,116,0.12), inset 0 0 20px rgba(212,165,116,0.05)' }}
             />
-            <span className="relative z-10">See Your Memory Map</span>
+            <span className="relative z-10 flex items-center gap-2">
+              See Your Memory Map
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </span>
           </button>
 
           <button

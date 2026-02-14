@@ -82,9 +82,11 @@ export default function ConversationalPrompt({
           onBlur={(e) => { e.target.style.borderBottomColor = 'rgba(212, 165, 116, 0.15)' }}
         />
 
-        {/* Voice indicator — subtle breathing dot */}
+        {/* Heart indicator — subtle breathing heart */}
         <div className="flex justify-center mt-4">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent-primary/60 animate-breathe" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/50 animate-breathe">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
         </div>
 
         {/* Submit — appears when there's text */}
@@ -99,8 +101,8 @@ export default function ConversationalPrompt({
               transition-colors cursor-pointer flex items-center gap-2"
           >
             Save this memory
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M5 12h14M12 5l7 7-7 7" />
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
         </div>
@@ -115,17 +117,18 @@ export default function ConversationalPrompt({
         </p>
       </div>
 
-      {/* Memory counter dots — subtle bottom indicator */}
+      {/* Memory counter hearts — subtle bottom indicator */}
       {memoryIndex > 0 && (
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
           <div className="flex items-center gap-2">
             {Array.from({ length: memoryIndex }).map((_, i) => (
-              <div
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-accent-primary/40"
-              />
+              <svg key={i} width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/40">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
             ))}
-            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-breathe" />
+            <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary animate-breathe">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
           </div>
         </div>
       )}

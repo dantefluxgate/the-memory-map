@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import ParticleField from '../common/ParticleField.jsx'
+import FloatingHearts from '../common/FloatingHearts.jsx'
 import RelationshipIntro from './RelationshipIntro.jsx'
 import ConversationalPrompt from './ConversationalPrompt.jsx'
 import MemoryReveal from './MemoryReveal.jsx'
@@ -107,6 +108,9 @@ export default function CreateView({
         fixed
       />
 
+      {/* Floating hearts — Valentine's Day atmosphere */}
+      <FloatingHearts count={10} opacity={0.05} />
+
       {/* Ambient center glow */}
       <div
         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px]
@@ -132,7 +136,9 @@ export default function CreateView({
       {phase === 'processing' && revealingMemory?.loading && (
         <div className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10">
           <div className="text-center">
-            <div className="w-2 h-2 rounded-full bg-accent-primary animate-breathe mx-auto mb-4" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="mx-auto mb-4 text-accent-primary animate-heart-beat heart-glow">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
             <p className="font-accent text-lg text-text-tertiary italic animate-fade-in">
               Understanding your memory...
             </p>

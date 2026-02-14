@@ -116,13 +116,18 @@ export default function SharedMemoryMoment({ memory, index, total }) {
           {memory.title}
         </h2>
 
-        {/* Decorative line */}
+        {/* Heart divider line */}
         <div
-          className={`mx-auto mt-7 mb-8 h-px bg-gradient-to-r from-transparent via-accent-primary/25 to-transparent transition-all duration-800 ${
-            phase >= 2 ? 'w-16 opacity-100' : 'w-0 opacity-0'
+          className={`flex items-center justify-center gap-3 mt-7 mb-8 transition-all duration-800 ${
+            phase >= 2 ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ transformOrigin: 'center' }}
-        />
+        >
+          <div className={`h-px bg-gradient-to-r from-transparent to-accent-primary/20 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30 shrink-0">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <div className={`h-px bg-gradient-to-l from-transparent to-accent-primary/20 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
+        </div>
 
         {/* Excerpt — the emotional core */}
         <p
