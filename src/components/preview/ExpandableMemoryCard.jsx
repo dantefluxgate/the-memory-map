@@ -12,13 +12,14 @@ const emotionColors = {
   comfort:     { accent: '#D4B98C', glow: 'rgba(212, 185, 140, 0.08)' },
 }
 
-export default function ExpandableMemoryCard({ memory, index, recipientName }) {
+export default function ExpandableMemoryCard({ memory, index, recipientName, loveLanguage: loveLanguageProp }) {
   const [expanded, setExpanded] = useState(false)
   const expandRef = useRef(null)
   const [measuredHeight, setMeasuredHeight] = useState(0)
 
   const colors = emotionColors[memory.emotion] || emotionColors.joy
-  const loveLanguage = deriveLoveLanguage(memory.emotion, memory.theme_tags, recipientName)
+  // Use pre-derived love language from parent (deduped) or fall back to individual derivation
+  const loveLanguage = loveLanguageProp || deriveLoveLanguage(memory.emotion, memory.theme_tags, recipientName)
 
   // Measure the expanded content height
   useEffect(() => {

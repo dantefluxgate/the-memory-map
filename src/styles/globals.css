@@ -745,3 +745,22 @@ body::before {
 .mapboxgl-popup-tip {
   display: none !important;
 }
+
+/* ============================================
+   Text Glow — Relationship Essence Climax
+   ============================================ */
+
+@keyframes text-glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(212, 165, 116, 0.0),
+                 0 0 40px rgba(212, 165, 116, 0.0);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(212, 165, 116, 0.25),
+                 0 0 60px rgba(212, 165, 116, 0.10);
+  }
+}
+
+.animate-text-glow {
+  animation: text-glow-pulse 4s ease-in-out infinite;
+}

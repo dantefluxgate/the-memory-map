@@ -61,48 +61,125 @@ const LOVE_LANGUAGES = {
 }
 
 /**
- * Derive the best-matching love language from a memory's emotion and tags.
- * Uses a weighted scoring system: emotion match = 2pts, tag match = 3pts.
- * Also considers the raw text of the excerpt for deeper matching.
+ * Score all love languages for a single memory.
+ * Returns sorted array of [language, score] pairs (highest first).
  */
-export function deriveLoveLanguage(emotion, themeTags = [], recipientName = '') {
-  let bestMatch = null
-  let bestScore = 0
+function scoreAllLanguages(emotion, themeTags = []) {
   const tagsLower = themeTags.map((t) => t.toLowerCase())
+  const scores = []
 
   for (const [language, config] of Object.entries(LOVE_LANGUAGES)) {
     let score = 0
-
-    // Emotion match is worth 2 points
     if (config.emotions.includes(emotion)) score += 2
-
-    // Tag matches worth 3 points each
     for (const tag of tagsLower) {
       if (config.tags.some((t) => tag.includes(t) || t.includes(tag))) score += 3
     }
-
-    if (score > bestScore) {
-      bestScore = score
-      bestMatch = { language, config, score }
-    }
+    scores.push([language, score])
   }
 
-  // Fallback to Quality Time (most universal)
-  if (!bestMatch || bestScore < 2) {
-    bestMatch = {
-      language: 'Quality Time',
-      config: LOVE_LANGUAGES['Quality Time'],
-      score: 0,
-    }
-  }
+  return scores.sort((a, b) => b[1] - a[1])
+}
 
-  // Pick insight based on emotion string length for pseudo-randomness
-  const insightIndex = (emotion || '').length % bestMatch.config.insights.length
-  const insight = bestMatch.config.insights[insightIndex](recipientName)
+/**
+ * Simple hash from string → number for pseudo-random insight selection.
+ */
+function simpleHash(str) {
+  let h = 0
+  for (let i = 0; i < str.length; i++) {
+    h = ((h << 5) - h + str.charCodeAt(i)) | 0
+  }
+  return Math.abs(h)
+}
+
+/**
+ * Derive the best-matching love language from a memory's emotion and tags.
+ * Uses a weighted scoring system: emotion match = 2pts, tag match = 3pts.
+ */
+export function deriveLoveLanguage(emotion, themeTags = [], recipientName = '') {
+  const scores = scoreAllLanguages(emotion, themeTags)
+  const [bestLang, bestScore] = scores[0]
+
+  const language = bestScore >= 2 ? bestLang : 'Quality Time'
+  const config = LOVE_LANGUAGES[language]
+  const insightIndex = (emotion || '').length % config.insights.length
+  const insight = config.insights[insightIndex](recipientName)
 
   return {
-    language: bestMatch.language,
-    description: bestMatch.config.description,
+    language,
+    description: config.description,
     insight,
   }
+}
+
+/**
+ * Batch-derive love languages for all memories at once, ensuring variety.
+ *
+ * Algorithm:
+ * 1. Score all 5 languages for each memory
+ * 2. Greedy assignment: each memory gets its highest-scoring
+ *    language that hasn't been used yet
+ * 3. After all 5 languages are assigned, repeats are allowed
+ *    but use the next-best unused insight variant
+ * 4. Returns object keyed by memory.id
+ */
+export function deriveLoveLanguagesForAll(memories, recipientName = '') {
+  if (!memories || memories.length === 0) return {}
+
+  const languageNames = Object.keys(LOVE_LANGUAGES)
+  const usedLanguages = new Set()
+  const usedInsightKeys = new Set() // "language:insightIndex" to avoid same insight text
+  const results = {}
+
+  // Score each memory against all languages
+  const scored = memories.map((m, idx) => ({
+    id: m.id,
+    index: idx,
+    emotion: m.emotion,
+    scores: scoreAllLanguages(m.emotion, m.theme_tags),
+  }))
+
+  // Sort by highest top score descending — strongest matches pick first
+  const sorted = [...scored].sort((a, b) => b.scores[0][1] - a.scores[0][1])
+
+  for (const item of sorted) {
+    let chosen = null
+
+    // Try to pick highest-scoring language that hasn't been used yet
+    if (usedLanguages.size < languageNames.length) {
+      for (const [lang, score] of item.scores) {
+        if (!usedLanguages.has(lang)) {
+          chosen = lang
+          break
+        }
+      }
+    }
+
+    // All 5 used (or >5 memories) — fall back to best-scoring
+    if (!chosen) {
+      chosen = item.scores[0][0]
+    }
+
+    usedLanguages.add(chosen)
+    const config = LOVE_LANGUAGES[chosen]
+
+    // Pick an insight variant that hasn't been used for this language
+    const hash = simpleHash(item.id + item.index)
+    let insightIndex = hash % config.insights.length
+    for (let attempt = 0; attempt < config.insights.length; attempt++) {
+      const key = `${chosen}:${insightIndex}`
+      if (!usedInsightKeys.has(key)) {
+        usedInsightKeys.add(key)
+        break
+      }
+      insightIndex = (insightIndex + 1) % config.insights.length
+    }
+
+    results[item.id] = {
+      language: chosen,
+      description: config.description,
+      insight: config.insights[insightIndex](recipientName),
+    }
+  }
+
+  return results
 }

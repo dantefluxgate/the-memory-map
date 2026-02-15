@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RelationshipMap from '../create/RelationshipMap.jsx'
 import ShareControls from './ShareControls.jsx'
@@ -8,6 +8,7 @@ import FloatingHearts from '../common/FloatingHearts.jsx'
 import HeartDivider from '../common/HeartDivider.jsx'
 import ExpandableMemoryCard from './ExpandableMemoryCard.jsx'
 import Button from '../common/Button.jsx'
+import { deriveLoveLanguagesForAll } from '../../utils/loveLanguage.js'
 
 export default function PreviewView({ memories, relationshipContext, relationshipSummary, personalNote, setPersonalNote }) {
   const navigate = useNavigate()
@@ -38,6 +39,12 @@ export default function PreviewView({ memories, relationshipContext, relationshi
 
   const locationsExist = memories.some((m) => m.location?.coordinates)
   const name = relationshipContext?.name || 'them'
+
+  // Batch-derive love languages so each card gets a unique one
+  const loveLanguageMap = useMemo(
+    () => deriveLoveLanguagesForAll(memories, name),
+    [memories, name]
+  )
 
   // Gather unique emotions and locations for stats
   const emotions = [...new Set(memories.map(m => m.emotion).filter(Boolean))]
@@ -197,6 +204,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
                   memory={memory}
                   index={index}
                   recipientName={name}
+                  loveLanguage={loveLanguageMap[memory.id]}
                 />
               </div>
             </ScrollReveal>

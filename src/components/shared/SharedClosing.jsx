@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useScrollReveal from '../../hooks/useScrollReveal.js'
 
-export default function SharedClosing({ summary }) {
+export default function SharedClosing({ summary, particleRef }) {
   const [ref, isVisible] = useScrollReveal({ threshold: 0.25 })
   const [phase, setPhase] = useState(0)
   const navigate = useNavigate()
 
   useEffect(() => {
     if (isVisible) {
+      // Fire particle burst for the finale + shift to warm gold
+      particleRef?.current?.burst()
+      particleRef?.current?.setColor(0xd4a574)
       const t1 = setTimeout(() => setPhase(1), 300)
       const t2 = setTimeout(() => setPhase(2), 1200)
       const t3 = setTimeout(() => setPhase(3), 2000)
@@ -53,7 +56,7 @@ export default function SharedClosing({ summary }) {
         {summary?.relationship_essence && (
           <p
             className={`font-accent italic text-[clamp(22px,4vw,30px)] text-text-secondary leading-[1.6] transition-all duration-[1500ms] ease-out ${
-              phase >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              phase >= 1 ? 'opacity-100 translate-y-0 animate-text-glow' : 'opacity-0 translate-y-8'
             }`}
             style={{ filter: phase >= 1 ? 'blur(0)' : 'blur(4px)' }}
           >

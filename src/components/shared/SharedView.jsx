@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
 import { decodeShareData } from '../../utils/shareLink.js'
 import SharedMemoryMoment from './SharedMemoryMoment.jsx'
 import SharedMapReveal from './SharedMapReveal.jsx'
@@ -8,9 +8,23 @@ import ParticleField from '../common/ParticleField.jsx'
 import FloatingHearts from '../common/FloatingHearts.jsx'
 import HeartDivider from '../common/HeartDivider.jsx'
 
+// Emotion → particle hex color for dynamic color shifts
+const EMOTION_COLORS = {
+  joy:         0xd4a574,
+  nostalgia:   0xb4a0c8,
+  gratitude:   0xa0c8aa,
+  love:        0xc88c8c,
+  humor:       0xd4be74,
+  bittersweet: 0xaa9bbe,
+  adventure:   0x74afd4,
+  comfort:     0xd4b98c,
+}
+const DEFAULT_COLOR = 0xd4a574
+
 export default function SharedView() {
   const { data } = useParams()
   const [phase, setPhase] = useState(0) // 0=blank, 1=intro, 2=note, 3=scroll
+  const particleRef = useRef(null)
 
   const shareData = useMemo(() => {
     if (!data) return null
@@ -22,6 +36,12 @@ export default function SharedView() {
     const t2 = setTimeout(() => setPhase(2), 1600)
     const t3 = setTimeout(() => setPhase(3), 2600)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [])
+
+  // Track which memory section is in view → shift particle color
+  const handleMemoryVisible = useCallback((emotion) => {
+    const hex = EMOTION_COLORS[emotion] || DEFAULT_COLOR
+    particleRef.current?.setColor(hex)
   }, [])
 
   if (!shareData) {
@@ -39,8 +59,8 @@ export default function SharedView() {
 
   return (
     <main className="min-h-screen bg-bg-primary relative">
-      {/* Global particle field — heart constellation for the gift experience */}
-      <ParticleField mode="heart" intensity={0.8} fixed />
+      {/* Global particle field — heart constellation, color shifts per emotion */}
+      <ParticleField ref={particleRef} mode="heart" intensity={0.8} fixed />
 
       {/* Floating hearts — Valentine's Day atmosphere */}
       <FloatingHearts count={16} opacity={0.07} />
@@ -159,6 +179,7 @@ export default function SharedView() {
           memory={memory}
           index={index}
           total={memories.length}
+          onVisible={handleMemoryVisible}
         />
       ))}
 
@@ -166,7 +187,7 @@ export default function SharedView() {
       <SharedMapReveal memories={memories} />
 
       {/* Closing */}
-      <SharedClosing summary={summary} />
+      <SharedClosing summary={summary} particleRef={particleRef} />
     </main>
   )
 }

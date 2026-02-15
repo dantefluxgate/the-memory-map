@@ -117,6 +117,7 @@ export function createConstellationScene(canvas, options = {}) {
   let doHeart = heartMode === 'heart'
   const mouse = { x: 0, y: 0, active: false }
   const burstState = { active: false, startTime: 0, duration: 1.5 }
+  const colorLerp = { active: false, from: new THREE.Color(color), to: new THREE.Color(color), progress: 0, speed: 0.02 }
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' })
@@ -270,6 +271,14 @@ export function createConstellationScene(canvas, options = {}) {
     }
 
     lGeo.setDrawRange(0, ci*2)
+
+    // Smooth color lerp
+    if (colorLerp.active) {
+      colorLerp.progress = Math.min(colorLerp.progress + colorLerp.speed, 1)
+      col3.lerpColors(colorLerp.from, colorLerp.to, colorLerp.progress)
+      if (colorLerp.progress >= 1) colorLerp.active = false
+    }
+
     pGeo.attributes.position.needsUpdate = true; pGeo.attributes.alpha.needsUpdate = true
     lGeo.attributes.position.needsUpdate = true; lGeo.attributes.alpha.needsUpdate = true
     renderer.render(scene, camera)
@@ -309,6 +318,12 @@ export function createConstellationScene(canvas, options = {}) {
           particles[i].heartY = hTargets[i].y
         }
       }
+    },
+    setColor(hexColor) {
+      colorLerp.from.copy(col3)
+      colorLerp.to.set(hexColor)
+      colorLerp.progress = 0
+      colorLerp.active = true
     },
   }
 }

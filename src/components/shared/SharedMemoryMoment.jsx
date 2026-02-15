@@ -45,12 +45,14 @@ const emotionVisuals = {
   },
 }
 
-export default function SharedMemoryMoment({ memory, index, total }) {
+export default function SharedMemoryMoment({ memory, index, total, onVisible }) {
   const [ref, isVisible] = useScrollReveal({ threshold: 0.2 })
   const [phase, setPhase] = useState(0) // 0=hidden, 1=title, 2=excerpt, 3=meta
 
   useEffect(() => {
     if (isVisible) {
+      // Notify parent to shift particle color to this emotion
+      onVisible?.(memory.emotion)
       const t1 = setTimeout(() => setPhase(1), 200)
       const t2 = setTimeout(() => setPhase(2), 700)
       const t3 = setTimeout(() => setPhase(3), 1300)

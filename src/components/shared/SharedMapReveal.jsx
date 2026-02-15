@@ -227,7 +227,7 @@ function drawRouteLine(map, coordinates) {
     },
   })
 
-  // Main dashed line
+  // Main dashed line — starts invisible, then animates in
   map.addLayer({
     id: layerId,
     type: 'line',
@@ -239,7 +239,22 @@ function drawRouteLine(map, coordinates) {
     paint: {
       'line-color': 'rgba(212, 165, 116, 0.35)',
       'line-width': 1.5,
-      'line-dasharray': [3, 4],
+      'line-dasharray': [0, 100],
     },
   })
+
+  // Animate the dash: grow the visible segment over 2 seconds
+  const totalLength = 7 // dash + gap cycle
+  const steps = 60
+  let step = 0
+  const dashInterval = setInterval(() => {
+    step++
+    const progress = step / steps
+    const visible = progress * totalLength
+    const gap = Math.max(0.1, totalLength - visible)
+    try {
+      map.setPaintProperty(layerId, 'line-dasharray', [visible, gap])
+    } catch { /* map may be destroyed */ }
+    if (step >= steps) clearInterval(dashInterval)
+  }, 2000 / steps)
 }

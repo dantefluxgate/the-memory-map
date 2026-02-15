@@ -41,6 +41,7 @@ const ParticleField = forwardRef(function ParticleField({
   useImperativeHandle(ref, () => ({
     burst: () => sceneRef.current?.burst(),
     setHeartMode: (m) => sceneRef.current?.setHeartMode(m),
+    setColor: (hex) => sceneRef.current?.setColor(hex),
   }))
 
   useEffect(() => {
