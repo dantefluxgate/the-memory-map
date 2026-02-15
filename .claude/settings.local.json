@@ -28,7 +28,15 @@
       "Bash(git reset:*)",
       "Bash(git mv:*)",
       "Bash(ls:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(together\", \"Where your love has been\", personal note prompt. Shared\nview: \"Every moment here is real — remembered, written, and given)",
+      "Bash(with love\", \"Make One for Your Valentine\" CTA.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebFetch(domain:valentinememorymap.replit.app)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run dev:*)"
     ]
   }
 }
