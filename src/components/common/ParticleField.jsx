@@ -53,9 +53,9 @@ const ParticleField = forwardRef(function ParticleField({
 
     // Determine particle count based on intensity and viewport
     const isMobile = window.innerWidth < 768
-    const baseCount = isMobile ? 35 : 70
-    const particleCount = Math.round(baseCount * (0.4 + intensity * 0.8))
-    const baseConnDist = isMobile ? 80 : 110
+    const baseCount = isMobile ? 45 : 90
+    const particleCount = Math.round(baseCount * (0.5 + intensity * 0.8))
+    const baseConnDist = isMobile ? 90 : 130
     const connectionDistance = Math.round(baseConnDist * (0.7 + intensity * 0.5))
 
     // Map mode to heart cycle config
@@ -68,8 +68,8 @@ const ParticleField = forwardRef(function ParticleField({
         connectionDistance,
         color,
         heartMode,
-        alphaMultiplier: mode === 'ambient' ? 0.4 : 0.6 + intensity * 0.4,
-        connectionAlphaMultiplier: mode === 'ambient' ? 0.3 : 0.5 + intensity * 0.5,
+        alphaMultiplier: mode === 'ambient' ? 0.5 : 0.7 + intensity * 0.4,
+        connectionAlphaMultiplier: mode === 'ambient' ? 0.4 : 0.6 + intensity * 0.5,
       })
     } catch (err) {
       console.warn('ParticleField: scene creation failed', err)

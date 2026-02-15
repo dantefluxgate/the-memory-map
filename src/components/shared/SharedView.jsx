@@ -8,18 +8,18 @@ import ParticleField from '../common/ParticleField.jsx'
 import FloatingHearts from '../common/FloatingHearts.jsx'
 import HeartDivider from '../common/HeartDivider.jsx'
 
-// Emotion → particle hex color for dynamic color shifts
+// Emotion → particle hex color for dynamic color shifts (vivid)
 const EMOTION_COLORS = {
-  joy:         0xd4a574,
-  nostalgia:   0xb4a0c8,
-  gratitude:   0xa0c8aa,
-  love:        0xc88c8c,
-  humor:       0xd4be74,
-  bittersweet: 0xaa9bbe,
-  adventure:   0x74afd4,
-  comfort:     0xd4b98c,
+  joy:         0xe8c090,
+  nostalgia:   0xc4b0d8,
+  gratitude:   0xb0d8ba,
+  love:        0xd89c9c,
+  humor:       0xe0cc80,
+  bittersweet: 0xbbabce,
+  adventure:   0x84bfe4,
+  comfort:     0xe0c89c,
 }
-const DEFAULT_COLOR = 0xd4a574
+const DEFAULT_COLOR = 0xe0b080
 
 export default function SharedView() {
   const { data } = useParams()
@@ -60,18 +60,21 @@ export default function SharedView() {
   return (
     <main className="min-h-screen bg-bg-primary relative">
       {/* Global particle field — heart constellation, color shifts per emotion */}
-      <ParticleField ref={particleRef} mode="heart" intensity={0.8} fixed />
+      <ParticleField ref={particleRef} mode="heart" intensity={0.95} fixed />
 
       {/* Floating hearts — Valentine's Day atmosphere */}
-      <FloatingHearts count={16} opacity={0.07} />
+      <FloatingHearts count={18} opacity={0.12} />
 
       {/* Opening screen — full cinematic */}
       <section className="min-h-screen flex items-center justify-center relative px-6 overflow-hidden">
-        {/* Animated ambient warmth */}
+        {/* Sparkle twinkles */}
+        <div className="sparkle-field absolute inset-0 pointer-events-none" />
+
+        {/* Animated ambient warmth — bigger and brighter */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none animate-glow-pulse"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none animate-glow-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(212,165,116,0.06) 0%, transparent 60%)',
+            background: 'radial-gradient(circle, rgba(224,176,128,0.14) 0%, rgba(224,176,128,0.04) 40%, transparent 65%)',
           }}
         />
 
@@ -94,7 +97,7 @@ export default function SharedView() {
               height="32"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="mx-auto text-accent-primary/50 heart-glow animate-heart-beat"
+              className="mx-auto text-accent-primary/70 heart-glow animate-heart-beat"
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
@@ -112,7 +115,7 @@ export default function SharedView() {
           </p>
 
           <p
-            className={`font-accent text-base text-text-tertiary/60 mt-4 transition-all duration-1000 ease-out ${
+            className={`font-accent text-base text-text-secondary/70 mt-4 transition-all duration-1000 ease-out ${
               phase >= 1 ? 'opacity-100' : 'opacity-0'
             }`}
             style={{ transitionDelay: '0.8s' }}
@@ -132,7 +135,7 @@ export default function SharedView() {
 
           {summary?.timeline_title && (
             <p
-              className={`font-display text-lg text-accent-primary/60 mt-8 tracking-wide transition-all duration-700 ${
+              className={`font-display text-lg text-accent-primary/80 mt-8 tracking-wide animate-text-glow transition-all duration-700 ${
                 phase >= 2 ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ transitionDelay: '0.4s' }}
@@ -149,7 +152,7 @@ export default function SharedView() {
           }`}
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="font-body text-[10px] uppercase tracking-[0.15em] text-text-tertiary/40">
+            <span className="font-body text-[10px] uppercase tracking-[0.15em] text-text-tertiary/60">
               Scroll to begin
             </span>
             <div className="animate-gentle-bounce">

@@ -2,14 +2,14 @@ import { useState, useRef, useEffect } from 'react'
 import { deriveLoveLanguage } from '../../utils/loveLanguage.js'
 
 const emotionColors = {
-  joy:         { accent: '#D4A574', glow: 'rgba(212, 165, 116, 0.10)' },
-  nostalgia:   { accent: '#B4A0C8', glow: 'rgba(180, 160, 200, 0.08)' },
-  gratitude:   { accent: '#A0C8AA', glow: 'rgba(160, 200, 170, 0.08)' },
-  love:        { accent: '#C88C8C', glow: 'rgba(200, 140, 140, 0.10)' },
-  humor:       { accent: '#D4BE74', glow: 'rgba(212, 190, 116, 0.08)' },
-  bittersweet: { accent: '#AA9BBE', glow: 'rgba(170, 155, 190, 0.08)' },
-  adventure:   { accent: '#74AFD4', glow: 'rgba(116, 175, 212, 0.08)' },
-  comfort:     { accent: '#D4B98C', glow: 'rgba(212, 185, 140, 0.08)' },
+  joy:         { accent: '#E0B080', glow: 'rgba(224, 176, 128, 0.16)' },
+  nostalgia:   { accent: '#C4B0D8', glow: 'rgba(196, 176, 216, 0.14)' },
+  gratitude:   { accent: '#B0D8BA', glow: 'rgba(176, 216, 186, 0.14)' },
+  love:        { accent: '#D89C9C', glow: 'rgba(216, 156, 156, 0.16)' },
+  humor:       { accent: '#E0CC80', glow: 'rgba(224, 204, 128, 0.14)' },
+  bittersweet: { accent: '#BBABCE', glow: 'rgba(187, 171, 206, 0.14)' },
+  adventure:   { accent: '#84BFE4', glow: 'rgba(132, 191, 228, 0.14)' },
+  comfort:     { accent: '#E0C89C', glow: 'rgba(224, 200, 156, 0.14)' },
 }
 
 export default function ExpandableMemoryCard({ memory, index, recipientName, loveLanguage: loveLanguageProp }) {
@@ -72,15 +72,15 @@ export default function ExpandableMemoryCard({ memory, index, recipientName, lov
 
       {/* Heart decorative line */}
       <div className="flex items-center justify-center gap-3 mb-4">
-        <div className="w-6 h-px bg-gradient-to-r from-transparent to-accent-primary/20" />
-        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/25">
+        <div className="w-6 h-px bg-gradient-to-r from-transparent to-accent-primary/30" />
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/45 heart-glow">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
-        <div className="w-6 h-px bg-gradient-to-l from-transparent to-accent-primary/20" />
+        <div className="w-6 h-px bg-gradient-to-l from-transparent to-accent-primary/30" />
       </div>
 
       {/* Excerpt */}
-      <p className="font-accent text-[clamp(15px,2.2vw,19px)] text-text-secondary/85 leading-[1.8] mb-5 max-w-[480px] mx-auto">
+      <p className="font-accent text-[clamp(15px,2.2vw,19px)] text-text-secondary leading-[1.8] mb-5 max-w-[480px] mx-auto">
         &ldquo;{memory.excerpt}&rdquo;
       </p>
 
@@ -98,7 +98,7 @@ export default function ExpandableMemoryCard({ memory, index, recipientName, lov
         {memory.theme_tags?.map((tag) => (
           <span
             key={tag}
-            className="font-body text-[9px] text-text-tertiary/30 bg-bg-elevated/30 rounded-full px-2.5 py-0.5"
+            className="font-body text-[9px] text-text-tertiary/50 bg-bg-elevated/30 rounded-full px-2.5 py-0.5"
           >
             {tag}
           </span>

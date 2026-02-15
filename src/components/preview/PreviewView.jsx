@@ -53,18 +53,21 @@ export default function PreviewView({ memories, relationshipContext, relationshi
   return (
     <main className="min-h-screen bg-bg-primary relative overflow-hidden">
       {/* Heart constellation — building anticipation */}
-      <ParticleField ref={particleRef} mode="heart" intensity={0.6} fixed />
+      <ParticleField ref={particleRef} mode="heart" intensity={0.85} fixed />
 
       {/* Floating hearts — Valentine's Day atmosphere */}
-      <FloatingHearts count={14} opacity={0.06} />
+      <FloatingHearts count={16} opacity={0.10} />
 
       {/* ═══════════════ HERO SECTION ═══════════════ */}
       <section className="min-h-screen flex flex-col items-center justify-center relative px-6">
-        {/* Ambient warmth glow */}
+        {/* Sparkle twinkles */}
+        <div className="sparkle-field absolute inset-0 pointer-events-none" />
+
+        {/* Ambient warmth glow — brighter */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none animate-glow-pulse"
           style={{
-            background: 'radial-gradient(circle, rgba(212,165,116,0.06) 0%, transparent 60%)',
+            background: 'radial-gradient(circle, rgba(224,176,128,0.14) 0%, rgba(224,176,128,0.04) 40%, transparent 65%)',
           }}
         />
 
@@ -91,7 +94,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
               height="28"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="mx-auto text-accent-primary/40 heart-glow animate-heart-beat"
+              className="mx-auto text-accent-primary/70 heart-glow animate-heart-beat"
             >
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
@@ -184,7 +187,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         <ScrollReveal>
           <div className="text-center mb-16">
             <HeartDivider size={12} />
-            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40 mt-2">
+            <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/60 mt-2">
               Your moments together
             </p>
           </div>
@@ -218,7 +221,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
           <ScrollReveal>
             <div className="text-center mb-10">
               <HeartDivider size={12} />
-              <p className="font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/40 mt-2">
+              <p className="font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/60 mt-2">
                 Where your love has been
               </p>
             </div>
@@ -241,7 +244,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
             {relationshipSummary.dominant_themes.map((theme, i) => (
               <span
                 key={theme}
-                className="font-body text-[10px] uppercase tracking-[0.08em] text-accent-primary/60 border border-accent-primary/15 rounded-full px-5 py-1.5 animate-stagger-up"
+                className="font-body text-[10px] uppercase tracking-[0.08em] text-accent-primary/80 border border-accent-primary/25 rounded-full px-5 py-1.5 animate-stagger-up"
                 style={{ animationDelay: `${i * 0.1}s`, opacity: 0 }}
               >
                 {theme}
@@ -267,12 +270,12 @@ export default function PreviewView({ memories, relationshipContext, relationshi
               resize-none pb-4 transition-colors duration-500"
             style={{
               border: 'none',
-              borderBottom: '1px solid rgba(212, 165, 116, 0.12)',
+              borderBottom: '1px solid rgba(224, 176, 128, 0.18)',
               outline: 'none',
               boxShadow: 'none',
             }}
-            onFocus={(e) => { e.target.style.borderBottomColor = 'rgba(212, 165, 116, 0.35)'; e.target.style.outline = 'none' }}
-            onBlur={(e) => { e.target.style.borderBottomColor = 'rgba(212, 165, 116, 0.12)' }}
+            onFocus={(e) => { e.target.style.borderBottomColor = 'rgba(224, 176, 128, 0.45)'; e.target.style.outline = 'none' }}
+            onBlur={(e) => { e.target.style.borderBottomColor = 'rgba(224, 176, 128, 0.18)' }}
           />
         </div>
       </ScrollReveal>
@@ -284,12 +287,12 @@ export default function PreviewView({ memories, relationshipContext, relationshi
 
         <ScrollReveal>
           <div className="text-center mb-6">
-            <p className="font-accent text-[clamp(20px,3vw,28px)] text-text-secondary/70 mb-2">
+            <p className="font-accent text-[clamp(20px,3vw,28px)] text-text-secondary mb-2 animate-text-glow">
               Send this to {name}
             </p>
-            <p className="font-body text-xs text-text-tertiary/40 flex items-center justify-center gap-2">
+            <p className="font-body text-xs text-text-tertiary/60 flex items-center justify-center gap-2">
               A Valentine made from real moments
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/50 heart-glow">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
             </p>

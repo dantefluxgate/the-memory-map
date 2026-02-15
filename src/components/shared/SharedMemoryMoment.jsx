@@ -1,47 +1,47 @@
 import { useState, useEffect } from 'react'
 import useScrollReveal from '../../hooks/useScrollReveal.js'
 
-// Richer emotion gradients for cinematic visual impact
+// Richer emotion gradients for cinematic visual impact — vivid & punchy
 const emotionVisuals = {
   joy: {
-    bg: 'rgba(212, 165, 116, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(212, 165, 116, 0.08) 0%, transparent 60%)',
-    accent: '#D4A574',
+    bg: 'rgba(224, 176, 128, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(224, 176, 128, 0.14) 0%, rgba(224, 176, 128, 0.03) 40%, transparent 65%)',
+    accent: '#E0B080',
   },
   nostalgia: {
-    bg: 'rgba(180, 160, 200, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(180, 160, 200, 0.06) 0%, transparent 60%)',
-    accent: '#B4A0C8',
+    bg: 'rgba(196, 176, 216, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(196, 176, 216, 0.12) 0%, rgba(196, 176, 216, 0.03) 40%, transparent 65%)',
+    accent: '#C4B0D8',
   },
   gratitude: {
-    bg: 'rgba(160, 200, 170, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(160, 200, 170, 0.06) 0%, transparent 60%)',
-    accent: '#A0C8AA',
+    bg: 'rgba(176, 216, 186, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(176, 216, 186, 0.12) 0%, rgba(176, 216, 186, 0.03) 40%, transparent 65%)',
+    accent: '#B0D8BA',
   },
   love: {
-    bg: 'rgba(200, 140, 140, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(200, 140, 140, 0.08) 0%, transparent 60%)',
-    accent: '#C88C8C',
+    bg: 'rgba(216, 156, 156, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(216, 156, 156, 0.14) 0%, rgba(216, 156, 156, 0.03) 40%, transparent 65%)',
+    accent: '#D89C9C',
   },
   humor: {
-    bg: 'rgba(212, 190, 116, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(212, 190, 116, 0.06) 0%, transparent 60%)',
-    accent: '#D4BE74',
+    bg: 'rgba(224, 204, 128, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(224, 204, 128, 0.12) 0%, rgba(224, 204, 128, 0.03) 40%, transparent 65%)',
+    accent: '#E0CC80',
   },
   bittersweet: {
-    bg: 'rgba(170, 155, 190, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(170, 155, 190, 0.06) 0%, transparent 60%)',
-    accent: '#AA9BBE',
+    bg: 'rgba(187, 171, 206, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(187, 171, 206, 0.12) 0%, rgba(187, 171, 206, 0.03) 40%, transparent 65%)',
+    accent: '#BBABCE',
   },
   adventure: {
-    bg: 'rgba(116, 175, 212, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(116, 175, 212, 0.06) 0%, transparent 60%)',
-    accent: '#74AFD4',
+    bg: 'rgba(132, 191, 228, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(132, 191, 228, 0.12) 0%, rgba(132, 191, 228, 0.03) 40%, transparent 65%)',
+    accent: '#84BFE4',
   },
   comfort: {
-    bg: 'rgba(212, 185, 140, 0.03)',
-    glow: 'radial-gradient(circle at 50% 40%, rgba(212, 185, 140, 0.06) 0%, transparent 60%)',
-    accent: '#D4B98C',
+    bg: 'rgba(224, 200, 156, 0.04)',
+    glow: 'radial-gradient(circle at 50% 40%, rgba(224, 200, 156, 0.12) 0%, rgba(224, 200, 156, 0.03) 40%, transparent 65%)',
+    accent: '#E0C89C',
   },
 }
 
@@ -101,11 +101,11 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
             phase >= 1 ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <div className="w-8 h-px bg-gradient-to-r from-transparent to-accent-primary/20" />
-          <span className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40">
+          <div className="w-8 h-px bg-gradient-to-r from-transparent to-accent-primary/30" />
+          <span className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/60">
             Memory {index + 1} of {total}
           </span>
-          <div className="w-8 h-px bg-gradient-to-l from-transparent to-accent-primary/20" />
+          <div className="w-8 h-px bg-gradient-to-l from-transparent to-accent-primary/30" />
         </div>
 
         {/* Title — big, cinematic */}
@@ -124,11 +124,11 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
             phase >= 2 ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <div className={`h-px bg-gradient-to-r from-transparent to-accent-primary/20 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30 shrink-0">
+          <div className={`h-px bg-gradient-to-r from-transparent to-accent-primary/30 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/50 shrink-0 heart-glow">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
-          <div className={`h-px bg-gradient-to-l from-transparent to-accent-primary/20 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
+          <div className={`h-px bg-gradient-to-l from-transparent to-accent-primary/30 transition-all duration-800 ${phase >= 2 ? 'w-8' : 'w-0'}`} />
         </div>
 
         {/* Excerpt — the emotional core */}
@@ -149,8 +149,8 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
           {/* Date and location in a clean layout */}
           <div className="flex items-center justify-center gap-6 mb-5 flex-wrap">
             {memory.date_hint && (
-              <span className="font-body text-[11px] uppercase tracking-[0.1em] text-text-tertiary/60 flex items-center gap-2">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent-primary/40">
+              <span className="font-body text-[11px] uppercase tracking-[0.1em] text-text-secondary/70 flex items-center gap-2">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent-primary/60">
                   <rect x="3" y="4" width="18" height="18" rx="2" />
                   <path d="M16 2v4M8 2v4M3 10h18" />
                 </svg>
@@ -158,8 +158,8 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
               </span>
             )}
             {memory.location?.place_name && (
-              <span className="font-body text-[11px] text-text-tertiary/60 flex items-center gap-2">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent-primary/40">
+              <span className="font-body text-[11px] text-text-secondary/70 flex items-center gap-2">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent-primary/60">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
@@ -174,8 +174,8 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
               <span
                 className="font-body text-[9px] uppercase tracking-[0.12em] rounded-full px-4 py-1 border"
                 style={{
-                  color: `${vis.accent}99`,
-                  borderColor: `${vis.accent}25`,
+                  color: `${vis.accent}cc`,
+                  borderColor: `${vis.accent}40`,
                 }}
               >
                 {memory.emotion}
@@ -184,7 +184,7 @@ export default function SharedMemoryMoment({ memory, index, total, onVisible }) 
             {memory.theme_tags?.map((tag) => (
               <span
                 key={tag}
-                className="font-body text-[9px] text-text-tertiary/35 bg-bg-elevated/20 rounded-full px-3 py-0.5"
+                className="font-body text-[9px] text-text-tertiary/50 bg-bg-elevated/30 rounded-full px-3 py-0.5"
               >
                 {tag}
               </span>
