@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 export default function MemoryReveal({ memory, onContinue }) {
   const [phase, setPhase] = useState(0) // 0=entering, 1=visible, 2=exiting
+  const hasExited = useRef(false)
+
+  const handleContinue = useCallback(() => {
+    if (hasExited.current) return
+    hasExited.current = true
+    setPhase(2)
+    setTimeout(() => onContinue(), 600)
+  }, [onContinue])
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 100)
@@ -19,12 +27,7 @@ export default function MemoryReveal({ memory, onContinue }) {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [phase, memory.loading])
-
-  const handleContinue = () => {
-    setPhase(2)
-    setTimeout(() => onContinue(), 600)
-  }
+  }, [phase, memory.loading, handleContinue])
 
   if (memory.loading) {
     return (
