@@ -22,43 +22,52 @@ app.get('/api/config', (req, res) => {
 })
 
 function buildMemoryPrompt(context) {
-  const contextLine = context
-    ? `\nContext: This memory is about someone named "${context.name}" who is the creator's ${context.typeLabel || 'loved one'}.\n`
-    : ''
+  const name = context?.name || 'this person'
+  const relationship = context?.typeLabel || 'loved one'
 
-  return `You are analyzing a personal memory shared about a relationship.${contextLine}
-Extract the following as JSON:
+  return `You are a gifted emotional storyteller helping someone preserve their most meaningful memories about ${name}, their ${relationship}.
+
+Someone is sharing a raw, unfiltered memory. Your job is to honor their words while finding the deeper emotional truth in what they shared. Think of yourself as a poet who listens — you don't rewrite their story, you illuminate it.
+
+Return a JSON object with these fields:
 
 {
-  "title": "A short, evocative title for this memory (max 6 words)",
-  "date_hint": "Any date, year, season, or time reference mentioned (null if none)",
+  "title": "A poetic, evocative title (2-5 words) that captures the ESSENCE of this moment — not a summary, but a feeling. Think book chapter titles, not headlines. Examples: 'The Way She Lingers', 'Kitchen Light at Midnight', 'What the Rain Knew'",
+  "date_hint": "Any time reference mentioned — a season, year, 'early on', 'last summer', etc. (null if none)",
   "location": {
-    "place_name": "Location mentioned (null if none)",
-    "coordinates": [lat, lng] or null
+    "place_name": "Where this happened, if mentioned (null if none)",
+    "coordinates": [lat, lng] — best guess coordinates if a real place is named, otherwise null
   },
-  "emotion": "primary emotion (joy, nostalgia, gratitude, love, humor, bittersweet, adventure, comfort)",
-  "excerpt": "The most vivid 1-2 sentences from the original text, lightly cleaned up",
-  "theme_tags": ["array of 1-3 thematic tags like 'first times', 'travel', 'everyday moments', 'milestones'"]
+  "emotion": "The primary emotion (choose ONE): joy, nostalgia, gratitude, love, humor, bittersweet, adventure, comfort. Pick the one that lives UNDERNEATH the words, not just on the surface.",
+  "excerpt": "The emotional core of their memory in 1-3 sentences. Keep their voice and phrasing — clean up only for clarity, never for style. If their words are raw and imperfect, that's the beauty. Preserve it.",
+  "theme_tags": ["1-3 thematic threads — choose from: 'first times', 'unspoken understanding', 'everyday sacred', 'vulnerability', 'growing together', 'chosen family', 'comfort in chaos', 'silent knowing', 'playful intimacy', 'the small things', 'milestones', 'finding home', 'letting go', 'trust', 'laughter as medicine'"]
 }
 
-Keep the person's voice. Don't rewrite their words. Just extract and organize. Return ONLY valid JSON, no markdown fences.`
+IMPORTANT:
+- The title should be EVOCATIVE, not descriptive. "The Bathroom" is bad. "Where We Were Honest" is good. "Her Laugh" is bad. "The Sound That Resets Me" is good.
+- If someone shares something brief or seemingly simple, look DEEPER. "The bathroom" might really be about vulnerability and safe spaces. "When she laughs" might be about how someone's joy sustains you.
+- The excerpt should make someone who reads it FEEL something, even without context.
+- Return ONLY valid JSON, no markdown fences or extra text.`
 }
 
 function buildSummaryPrompt(context) {
-  const contextLine = context
-    ? `\nContext: These memories are about someone named "${context.name}" who is the creator's ${context.typeLabel || 'loved one'}.\n`
-    : ''
+  const name = context?.name || 'this person'
+  const relationship = context?.typeLabel || 'loved one'
 
-  return `Based on these memories about a relationship, generate:${contextLine}
+  return `You are reading someone's collected memories about ${name}, their ${relationship}. These are real moments from a real relationship — not fiction.
+
+Your job: find the thread that connects these memories. What is the SPECIFIC emotional truth of THIS relationship? Not love in general — but what love looks like between these two people.
+
+Return a JSON object:
 
 {
-  "relationship_essence": "One sentence capturing what makes this relationship with ${context?.name || 'this person'} special",
-  "dominant_themes": ["top 3 themes across all memories"],
-  "timeline_title": "A poetic but not cheesy title for this collection (max 8 words)",
-  "color_mood": "warm_amber | deep_rose | golden_hour | midnight_blue"
+  "relationship_essence": "One powerful sentence that captures what makes this specific bond unlike any other. Be precise — reference the actual patterns you see in their memories. Not 'they love each other deeply' but something like 'A partnership where her joy sustains him and intimacy lives in the unguarded moments'. Make it feel like a line from a novel about THEIR story.",
+  "dominant_themes": ["Exactly 3 thematic threads that run through these memories — use evocative language, not clinical labels. Not 'communication' but 'the conversations that happen without words'. Not 'quality time' but 'finding the extraordinary in the ordinary'."],
+  "timeline_title": "A 2-4 word title for this collection that sounds like a film title or book chapter. Evocative, specific to their story. Not generic romance — something that could ONLY describe this couple. Examples: 'Sacred Ordinary', 'The Long Exhale', 'Built on Laughter'",
+  "color_mood": "warm_amber | deep_rose | golden_hour | midnight_blue — choose based on the overall emotional temperature"
 }
 
-Be specific to THESE memories. No generic love quotes. Return ONLY valid JSON, no markdown fences.`
+IMPORTANT: Be specific to THESE memories. Every word should feel earned by what they actually shared. No Hallmark sentiments. Return ONLY valid JSON, no markdown fences.`
 }
 
 app.post('/api/process-memory', async (req, res) => {
