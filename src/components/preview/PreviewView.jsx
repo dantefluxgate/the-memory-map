@@ -26,7 +26,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       <main className="min-h-screen bg-bg-primary flex items-center justify-center px-6">
         <div className="text-center">
           <p className="font-accent text-xl text-text-secondary mb-6">
-            No memories yet. Start by sharing some moments.
+            No memories yet. Start by sharing your story.
           </p>
           <Button onClick={() => navigate('/create')}>
             Create Memories
@@ -160,7 +160,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         >
           <div className="flex flex-col items-center gap-2">
             <span className="font-body text-[10px] uppercase tracking-[0.15em] text-text-tertiary/40">
-              Preview your memories
+              Scroll to explore
             </span>
             <div className="animate-gentle-bounce">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-tertiary/40">
@@ -178,7 +178,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
           <div className="text-center mb-16">
             <HeartDivider size={12} />
             <p className="font-body text-[10px] uppercase tracking-[0.25em] text-text-tertiary/40 mt-2">
-              Each memory, in your words
+              Your moments together
             </p>
           </div>
         </ScrollReveal>
@@ -211,7 +211,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
             <div className="text-center mb-10">
               <HeartDivider size={12} />
               <p className="font-body text-xs uppercase tracking-[0.2em] text-text-tertiary/40 mt-2">
-                Your Journey Together
+                Where your love has been
               </p>
             </div>
           </ScrollReveal>
@@ -247,12 +247,12 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       <ScrollReveal delay={0.1}>
         <div className="max-w-[520px] mx-auto px-6 py-16 relative z-10">
           <label className="font-accent text-base text-text-secondary/60 block mb-4 text-center">
-            Add a personal note for {name}
+            Write a note for {name}
           </label>
           <textarea
             value={personalNote}
             onChange={(e) => setPersonalNote(e.target.value)}
-            placeholder={`A message that appears when ${name} opens your Memory Map...`}
+            placeholder={`What would you say to ${name} right now?`}
             rows={3}
             className="w-full bg-transparent text-center font-accent text-lg text-text-primary
               placeholder:text-text-tertiary/30 placeholder:italic
@@ -277,10 +277,10 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         <ScrollReveal>
           <div className="text-center mb-6">
             <p className="font-accent text-[clamp(20px,3vw,28px)] text-text-secondary/70 mb-2">
-              Ready to send this to {name}?
+              Send this to {name}
             </p>
             <p className="font-body text-xs text-text-tertiary/40 flex items-center justify-center gap-2">
-              Every point is a real moment, in your own words
+              A Valentine made from real moments
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-accent-primary/30">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>

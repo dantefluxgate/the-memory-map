@@ -3,18 +3,18 @@ import ScrollReveal from '../common/ScrollReveal.jsx'
 const steps = [
   {
     number: '1',
-    label: 'Share your memories',
-    description: 'Talk or type about moments that matter',
+    label: 'Remember',
+    description: 'Talk or type about the moments you never want to forget',
   },
   {
     number: '2',
-    label: 'Watch it take shape',
-    description: 'Each memory becomes a point on your timeline',
+    label: 'Watch it come alive',
+    description: 'Each memory becomes part of your love map',
   },
   {
     number: '3',
-    label: 'Send it as a gift',
-    description: "Share a link they'll actually want to keep",
+    label: 'Send it with love',
+    description: "A Valentine's gift made entirely from your time together",
   },
 ]
 

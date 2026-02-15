@@ -67,7 +67,7 @@ export default function ConversationalPrompt({
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isProcessing}
-          placeholder="Speak or type your memory..."
+          placeholder="Tell your story here..."
           rows={2}
           className="w-full bg-transparent text-center font-body text-lg text-text-primary
             placeholder:font-accent placeholder:italic placeholder:text-text-tertiary/40

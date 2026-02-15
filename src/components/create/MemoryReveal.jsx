@@ -19,7 +19,7 @@ export default function MemoryReveal({ memory, onContinue }) {
         <div className="text-center">
           <div className="w-2 h-2 rounded-full bg-accent-primary animate-breathe mx-auto mb-4" />
           <p className="font-accent text-lg text-text-tertiary italic animate-fade-in">
-            Understanding your memory...
+            Capturing this moment...
           </p>
         </div>
       </div>

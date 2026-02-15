@@ -28,7 +28,7 @@ export default function SharedView() {
     return (
       <main className="min-h-screen bg-bg-primary flex items-center justify-center">
         <p className="font-accent text-xl text-text-secondary">
-          This memory map couldn't be found.
+          This Memory Map couldn't be found.
         </p>
       </main>
     )
@@ -97,7 +97,7 @@ export default function SharedView() {
             }`}
             style={{ transitionDelay: '0.8s' }}
           >
-            These are their memories of the two of you, in their own words.
+            Every moment here is real — remembered, written, and given with love.
           </p>
 
           {personalNote && (

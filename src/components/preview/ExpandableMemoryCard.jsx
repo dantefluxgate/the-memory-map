@@ -114,7 +114,7 @@ export default function ExpandableMemoryCard({ memory, index, recipientName }) {
           <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent-primary/30">
             <path d="M6 9l6 6 6-6" />
           </svg>
-          Tap to reveal love language
+          Tap to reveal more
         </span>
       </div>
 
@@ -143,7 +143,7 @@ export default function ExpandableMemoryCard({ memory, index, recipientName }) {
 
           {/* Love language label */}
           <p className="font-body text-[9px] uppercase tracking-[0.2em] text-text-tertiary/50 mb-2">
-            Love Language
+            Your Love Language
           </p>
           <h4
             className="font-display text-[clamp(20px,3vw,26px)] font-medium mb-2 leading-[1.2]"
@@ -164,7 +164,7 @@ export default function ExpandableMemoryCard({ memory, index, recipientName }) {
           {memory.rawText && memory.rawText !== memory.excerpt && (
             <div className="mt-2 p-5 rounded-xl bg-bg-elevated/20 border border-border-subtle/50 text-left">
               <p className="font-body text-[9px] uppercase tracking-[0.15em] text-text-tertiary/40 mb-3">
-                In your own words
+                What you said
               </p>
               <p className="font-accent text-sm text-text-secondary/50 leading-relaxed italic">
                 {memory.rawText}

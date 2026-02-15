@@ -150,7 +150,7 @@ export default function SharedMapReveal({ memories }) {
         }`}
       >
         <p className="font-body text-[10px] uppercase tracking-[0.2em] text-text-tertiary/40 mb-3">
-          Your Journey Together
+          Where your love has been
         </p>
         <div
           className={`w-12 h-px bg-gradient-to-r from-transparent via-accent-primary/30 to-transparent mx-auto ${
@@ -183,7 +183,7 @@ export default function SharedMapReveal({ memories }) {
           className="mt-6 font-body text-[10px] uppercase tracking-[0.15em] text-text-tertiary/30 animate-fade-up"
           style={{ animationDelay: '0.2s', opacity: 0, animationFillMode: 'forwards' }}
         >
-          {locations.length} places, one story
+          {locations.length} places that hold your story
         </p>
       )}
     </section>

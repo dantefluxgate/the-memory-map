@@ -3,12 +3,12 @@ import ParticleField from '../common/ParticleField.jsx'
 import FloatingHearts from '../common/FloatingHearts.jsx'
 
 const relationshipTypes = [
-  { id: 'partner', label: 'My Partner', sub: 'romantic love' },
-  { id: 'friend', label: 'My Best Friend', sub: 'the one who gets it' },
-  { id: 'parent', label: 'My Parent', sub: 'who shaped me' },
-  { id: 'sibling', label: 'My Sibling', sub: 'built-in best friend' },
-  { id: 'grandparent', label: 'My Grandparent', sub: 'living history' },
-  { id: 'other', label: 'Someone Special', sub: 'in my own words' },
+  { id: 'partner', label: 'My Partner', sub: 'my Valentine' },
+  { id: 'friend', label: 'My Best Friend', sub: 'my chosen family' },
+  { id: 'parent', label: 'My Parent', sub: 'my first love' },
+  { id: 'sibling', label: 'My Sibling', sub: 'my longest story' },
+  { id: 'grandparent', label: 'My Grandparent', sub: 'my foundation' },
+  { id: 'other', label: 'Someone Special', sub: 'my person' },
 ]
 
 export default function RelationshipIntro({ onComplete }) {
@@ -106,7 +106,7 @@ export default function RelationshipIntro({ onComplete }) {
               <span className="text-accent-primary">{name.trim()}</span> is...
             </p>
             <p className="font-body text-sm text-text-tertiary/60 mb-10">
-              This helps us understand the tone of your memories
+              This shapes how your Memory Map feels
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-[480px] mx-auto">

@@ -39,21 +39,21 @@ export default function HeroSection() {
           className="font-body text-[11px] uppercase tracking-[0.2em] text-accent-primary/50 mb-6 opacity-0 animate-fade-in"
           style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
         >
-          A valentine's day experience
+          The Memory Map
         </p>
 
         <h1
           className="font-display text-[clamp(36px,6vw,60px)] leading-[1.08] font-medium tracking-[-0.02em] text-text-primary opacity-0 animate-fade-up"
           style={{ animationFillMode: 'forwards', animationDelay: '0.2s' }}
         >
-          Turn your memories into something they can see.
+          Your love story, mapped in memories.
         </h1>
 
         <p
           className="font-body font-normal text-[clamp(16px,2.5vw,20px)] text-text-secondary mt-6 max-w-[480px] mx-auto leading-relaxed opacity-0 animate-fade-up"
           style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
         >
-          Talk about the person you love. We'll turn it into a visual story you can share.
+          Share the moments that matter most. We'll map them into a Valentine's gift worth keeping.
         </p>
 
         <div
@@ -70,7 +70,7 @@ export default function HeroSection() {
           className="font-body text-[11px] text-text-tertiary/40 mt-4 opacity-0 animate-fade-in"
           style={{ animationDelay: '1s', animationFillMode: 'forwards' }}
         >
-          No account needed. Free to create.
+          Free. No account needed. Ready in minutes.
         </p>
       </div>
 
