@@ -38,6 +38,8 @@ export default function ExpandableMemoryCard({ memory, index, recipientName }) {
       aria-expanded={expanded}
       onKeyDown={(e) => e.key === 'Enter' && setExpanded(!expanded)}
       style={{
+        padding: '32px',
+        textAlign: 'center',
         boxShadow: expanded
           ? `0 20px 80px rgba(0,0,0,0.5), 0 0 60px ${colors.glow}`
           : undefined,

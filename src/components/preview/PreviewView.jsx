@@ -172,7 +172,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
       </section>
 
       {/* ═══════════════ MEMORY CARDS ═══════════════ */}
-      <section className="relative z-10 pb-12 w-full flex flex-col items-center">
+      <section className="relative z-10 pb-12" style={{ width: '100%' }}>
         {/* Section header with heart */}
         <ScrollReveal>
           <div className="text-center mb-16">
@@ -184,7 +184,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
         </ScrollReveal>
 
         {/* Centered card stack — interactive expandable cards */}
-        <div className="max-w-[560px] w-full mx-auto px-6">
+        <div style={{ maxWidth: '560px', width: '100%', marginLeft: 'auto', marginRight: 'auto', paddingLeft: '24px', paddingRight: '24px' }}>
           {memories.map((memory, index) => (
             <ScrollReveal key={memory.id} delay={index * 0.08}>
               <div className="mb-10 relative">
