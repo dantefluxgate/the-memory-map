@@ -120,7 +120,7 @@ export default function SharedView() {
             }`}
             style={{ transitionDelay: '0.8s' }}
           >
-            Every moment here is real — remembered, written, and given with love.
+            Every moment here is real. Remembered, written, and given with love.
           </p>
 
           {personalNote && (

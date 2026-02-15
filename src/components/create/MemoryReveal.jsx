@@ -8,6 +8,19 @@ export default function MemoryReveal({ memory, onContinue }) {
     return () => clearTimeout(t1)
   }, [])
 
+  // Allow Enter key to continue once card is visible
+  useEffect(() => {
+    if (phase !== 1 || memory.loading) return
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        handleContinue()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [phase, memory.loading])
+
   const handleContinue = () => {
     setPhase(2)
     setTimeout(() => onContinue(), 600)
@@ -89,6 +102,9 @@ export default function MemoryReveal({ memory, onContinue }) {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </button>
+        <p className="mt-3 text-center font-body text-[11px] text-text-tertiary/30">
+          Press Enter to continue
+        </p>
       </div>
     </div>
   )

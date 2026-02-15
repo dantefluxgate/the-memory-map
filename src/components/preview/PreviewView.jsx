@@ -228,7 +228,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>
-            <div className="max-w-[900px] mx-auto px-6">
+            <div className="max-w-[900px] px-6" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
               <div className="map-cinematic h-[450px] border border-border-subtle">
                 <RelationshipMap memories={memories} />
               </div>
@@ -256,7 +256,7 @@ export default function PreviewView({ memories, relationshipContext, relationshi
 
       {/* ═══════════════ PERSONAL NOTE ═══════════════ */}
       <ScrollReveal delay={0.1}>
-        <div className="max-w-[520px] mx-auto px-6 py-16 relative z-10">
+        <div className="max-w-[520px] px-6 py-16 relative z-10" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
           <label className="font-accent text-base text-text-secondary/60 block mb-4 text-center">
             Write a note for {name}
           </label>
