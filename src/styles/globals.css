@@ -969,11 +969,11 @@ body::before {
     var(--color-text-primary) 100%
   );
   background-size: 200% 100%;
+  background-position: 80% center;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: hero-shimmer-sweep 4s ease-in-out infinite;
-  animation-delay: 1.5s;
+  animation: hero-shimmer-sweep 6s ease-in-out 2s infinite;
 }
 
 /* ============================================

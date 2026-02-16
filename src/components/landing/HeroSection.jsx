@@ -4,8 +4,8 @@ import Button from '../common/Button.jsx'
 import ParticleField from '../common/ParticleField.jsx'
 
 /**
- * Cinematic hero with word-by-word stagger reveal,
- * warm light sweep shimmer, and layered atmospheric glows.
+ * Cinematic hero with phased entrance, text glow,
+ * and layered atmospheric depth.
  */
 export default function HeroSection() {
   const navigate = useNavigate()
@@ -13,23 +13,20 @@ export default function HeroSection() {
 
   // Cinematic entrance sequence
   useEffect(() => {
-    const t0 = setTimeout(() => setPhase(1), 200)   // eyebrow fades in
-    const t1 = setTimeout(() => setPhase(2), 600)   // headline words stagger
-    const t2 = setTimeout(() => setPhase(3), 1800)  // subtitle appears
-    const t3 = setTimeout(() => setPhase(4), 2400)  // CTA appears
-    const t4 = setTimeout(() => setPhase(5), 3000)  // scroll hint
+    const t0 = setTimeout(() => setPhase(1), 200)   // heart + eyebrow
+    const t1 = setTimeout(() => setPhase(2), 700)   // headline
+    const t2 = setTimeout(() => setPhase(3), 1600)  // divider + subtitle
+    const t3 = setTimeout(() => setPhase(4), 2200)  // CTA
+    const t4 = setTimeout(() => setPhase(5), 2800)  // scroll hint
     return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4) }
   }, [])
 
-  // Split headline into words for stagger animation
-  const headlineWords = 'Your love story, mapped in memories.'.split(' ')
-
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden px-6">
-      {/* Three.js constellation — heart formation cycle */}
+      {/* Three.js constellation */}
       <ParticleField mode="heart" intensity={0.9} />
 
-      {/* Multi-layer ambient glow — cinematic depth */}
+      {/* Multi-layer ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none animate-glow-pulse"
         style={{
@@ -101,34 +98,26 @@ export default function HeroSection() {
           style={{
             opacity: phase >= 1 ? 1 : 0,
             transform: phase >= 1 ? 'translateY(0)' : 'translateY(12px)',
-            filter: phase >= 1 ? 'blur(0)' : 'blur(4px)',
+            filter: phase >= 1 ? 'blur(0px)' : 'blur(4px)',
             transition: 'all 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
           The Memory Map
         </p>
 
-        {/* Headline — word-by-word stagger reveal with blur-unblur */}
+        {/* Headline — cinematic blur-in with warm text glow */}
         <h1
-          className="font-display text-[clamp(36px,6vw,60px)] leading-[1.08] font-medium tracking-[-0.02em] text-text-primary hero-headline-shimmer"
-          style={{ textAlign: 'center', width: '100%' }}
+          className={`font-display text-[clamp(36px,6vw,60px)] leading-[1.08] font-medium tracking-[-0.02em] text-text-primary${phase >= 2 ? ' animate-text-glow' : ''}`}
+          style={{
+            opacity: phase >= 2 ? 1 : 0,
+            transform: phase >= 2 ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.97)',
+            filter: phase >= 2 ? 'blur(0px)' : 'blur(10px)',
+            transition: 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
+            textAlign: 'center',
+            width: '100%',
+          }}
         >
-          {headlineWords.map((word, i) => (
-            <span
-              key={i}
-              className="inline-block"
-              style={{
-                opacity: phase >= 2 ? 1 : 0,
-                transform: phase >= 2 ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
-                filter: phase >= 2 ? 'blur(0)' : 'blur(8px)',
-                transition: `all 0.9s cubic-bezier(0.22, 1, 0.36, 1)`,
-                transitionDelay: `${i * 0.08}s`,
-                marginRight: '0.25em',
-              }}
-            >
-              {word}
-            </span>
-          ))}
+          Your love story, mapped in memories.
         </h1>
 
         {/* Decorative line under headline */}
@@ -151,7 +140,7 @@ export default function HeroSection() {
           style={{
             opacity: phase >= 3 ? 1 : 0,
             transform: phase >= 3 ? 'translateY(0)' : 'translateY(16px)',
-            filter: phase >= 3 ? 'blur(0)' : 'blur(4px)',
+            filter: phase >= 3 ? 'blur(0px)' : 'blur(4px)',
             transition: 'all 1.2s cubic-bezier(0.22, 1, 0.36, 1)',
             maxWidth: '480px',
             textAlign: 'center',
