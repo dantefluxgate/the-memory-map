@@ -50,7 +50,7 @@ export default function ShareControls({ memories, summary, personalNote, relatio
   }
 
   return (
-    <div className="text-center py-8 max-w-[480px] mx-auto px-6">
+    <div className="text-center py-8 max-w-[480px] px-6" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
       {!shareUrl ? (
         <button
           onClick={handleGenerate}

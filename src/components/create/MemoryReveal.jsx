@@ -1,17 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 export default function MemoryReveal({ memory, onContinue }) {
   const [phase, setPhase] = useState(0) // 0=entering, 1=visible, 2=exiting
+  const hasExited = useRef(false)
+
+  const handleContinue = useCallback(() => {
+    if (hasExited.current) return
+    hasExited.current = true
+    setPhase(2)
+    setTimeout(() => onContinue(), 600)
+  }, [onContinue])
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 100)
     return () => clearTimeout(t1)
   }, [])
 
-  const handleContinue = () => {
-    setPhase(2)
-    setTimeout(() => onContinue(), 600)
-  }
+  // Allow Enter key to continue once card is visible
+  useEffect(() => {
+    if (phase !== 1 || memory.loading) return
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        handleContinue()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [phase, memory.loading, handleContinue])
 
   if (memory.loading) {
     return (
@@ -89,6 +105,9 @@ export default function MemoryReveal({ memory, onContinue }) {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </button>
+        <p className="mt-3 text-center font-body text-[11px] text-text-tertiary/30">
+          Press Enter to continue
+        </p>
       </div>
     </div>
   )

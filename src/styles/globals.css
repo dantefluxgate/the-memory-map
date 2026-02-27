@@ -945,3 +945,95 @@ body::before {
 .dazzle-ring {
   animation: dazzle-ring 3s ease-in-out infinite;
 }
+
+/* ============================================
+   Hero Headline Shimmer — warm light sweep
+   ============================================ */
+
+@keyframes hero-shimmer-sweep {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.hero-headline-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-text-primary) 0%,
+    var(--color-text-primary) 35%,
+    var(--color-accent-secondary) 50%,
+    var(--color-text-primary) 65%,
+    var(--color-text-primary) 100%
+  );
+  background-size: 200% 100%;
+  background-position: 80% center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hero-shimmer-sweep 6s ease-in-out 2s infinite;
+}
+
+/* ============================================
+   HowItWorks — Glass Step Cards
+   ============================================ */
+
+.step-card-glass {
+  background: rgba(20, 18, 16, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(224, 176, 128, 0.08);
+  border-radius: 16px;
+  padding: 36px 24px;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.step-card-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(224, 176, 128, 0.15), transparent 50%, rgba(224, 176, 128, 0.05));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.step-card-glass:hover {
+  background: rgba(31, 27, 24, 0.55);
+  border-color: rgba(224, 176, 128, 0.20);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35),
+              0 0 40px rgba(224, 176, 128, 0.06);
+}
+
+.step-card-glass:hover::before {
+  opacity: 1;
+}
+
+/* Step number glow */
+.step-number-glow {
+  position: relative;
+}
+
+.step-number-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(224, 176, 128, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orb-breathe 4s ease-in-out infinite;
+}
